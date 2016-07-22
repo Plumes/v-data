@@ -6,10 +6,16 @@
 	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 	<script src='assets/jquery-3.1.0.slim.min.js'></script>
 	<link rel="stylesheet" href="assets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+<div id="menu-btn"><i class="material-icons">menu</i></div>
 <div class="pure-menu" id="left-nav">
-    <span class="pure-menu-heading">Yahoo Sites</span>
+    <div class="pure-menu-title">
+        数据分析
+        <div id="hide-menu-btn"><i class="material-icons">chevron_left</i></div>
+    </div>
 
     <ul class="pure-menu-list">
     	<li class="pure-menu-heading">数据概况</li>
@@ -25,11 +31,19 @@
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">休闲地</a></li>
     </ul>
 </div>
-<button style="position:absolute;right:0px;" onclick="togglenav();">展开</button>
+<div class="pure-g">
+    <div class="pure-u-4-5" style="background-color: red;"></div>
+    <div class="pure-u-1-5" style="background-color: green;"></div>
+    <div class="pure-u-4-5" style="background-color: yellow;"></div>
+    <div class="pure-u-1-5" style="background-color: blue;"></div>
+</div>
 <script>
-	function togglenav() {
-		$("#left-nav").toggleClass('is-visible');
-	}
+	$("#menu-btn").click(function () {
+        $("#left-nav").addClass("is-visible");
+    });
+    $("#hide-menu-btn").click(function () {
+        $("#left-nav").removeClass("is-visible");
+    });
 </script>
 </body>
 </html>

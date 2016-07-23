@@ -1,8 +1,13 @@
 body {
 	background: #f4f7f9;
-    color: #b0bec5;
+    color: #a0a0a0;
 }
-
+.panel {
+    margin: 10px;
+    border: 2px solid #f2f4f5;
+    background: #fff;
+    border-radius: 2px;
+}
 #menu-btn {
     font-size: 24px;
     position: absolute;
@@ -81,4 +86,71 @@ body {
 }
 #left-nav .pure-menu-heading,#left-nav .pure-menu-link {
     color: #b0bec5;
+}
+#calendar {
+    margin: 10px;
+}
+#calendar .headbar {
+    box-sizing:border-box;
+    height: 48px;
+    line-height: 48px;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    font-size: 0px;
+}
+#calendar .headbar .control {
+    box-sizing:border-box;
+    border: none;
+    margin: 0px;
+    display: inline-block;
+    height: 48px;
+    line-height: 48px;
+    width: 10%;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+#calendar .headbar i {
+    vertical-align: middle;
+    font-size: 24px;
+}
+
+#calendar .headbar .date-title {
+    width: 60%;
+    cursor: default;
+}
+
+.date-title .year, .date-title .month {
+    font-size: 20px;
+    display: inline-block;
+}
+
+#calendar .week {
+    width: 100%;
+    text-align: center;
+}
+#calendar .week tr {
+    height: 36px;
+    line-height: 36px;
+}
+#calendar .week tr td {
+    text-align: center;
+    vertical-align: middle;
+}
+#calendar .week td a {
+    display: inline-block;
+    text-align: center;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    margin: 4px;
+    border: 0px;
+    border-radius: 14px;
+}
+#calendar .week td.has-data a{
+    margin: 2px;
+    background-color: skyblue;
+    color: #ffffff;
 }

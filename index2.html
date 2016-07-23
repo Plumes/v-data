@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 	<script src='assets/jquery-3.1.0.slim.min.js'></script>
 	<link rel="stylesheet" href="assets/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.js"></script>
+    <script src="assets/vue.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
@@ -32,8 +32,36 @@
     </ul>
 </div>
 <div class="pure-g">
-    <div class="pure-u-4-5" style="background-color: red;"></div>
-    <div class="pure-u-1-5" style="background-color: green;"></div>
+    <div class="pure-u-4-5" ></div>
+    <div class="pure-u-1-5" >
+        <div class="panel">
+            <div id="calendar">
+                <div class="headbar">
+                    <div class="control" v-on:click="calYear(-1)"><i class="material-icons">first_page</i></div>
+                    <div class="control" v-on:click="calMonth(-1)"><i class="material-icons">chevron_left</i></div>
+                    <div class="control date-title">
+                        <div class="year">{{ year }} 年</div>
+                        <div class="month">&nbsp;{{ month }} 月</div>
+                    </div>
+                    <div class="control" v-on:click="calMonth(1)"><i class="material-icons">chevron_right</i></div>
+                    <div class="control" v-on:click="calYear(1)"><i class="material-icons">last_page</i></div>
+                </div>
+
+                <table class="week">
+                    <thead>
+                        <tr>
+                            <th v-for="day_name in day_name_list">{{ day_name }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="week in week_list">
+                            <td v-for="day in week" v-bind:class="{'has-data' : day > 10}"><a v-if="day > 0">{{ day }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="pure-u-4-5" style="background-color: yellow;"></div>
     <div class="pure-u-1-5" style="background-color: blue;"></div>
 </div>
@@ -44,6 +72,63 @@
     $("#hide-menu-btn").click(function () {
         $("#left-nav").removeClass("is-visible");
     });
+    Vue.config.devtools = true;
+    var calendar = new Vue({
+        el:'#calendar',
+        data: {
+            year:0,
+            month:0,
+            day_name_list:['一','二','三','四','五','六','日'],
+        },
+        computed: {
+            week_list: function () {
+                var d= new Date(this.year, this.month, 0);
+                var day_num =  d.getDate();
+                var first_day = new Date(this.year, this.month-1, 1);
+                var first_day_name = first_day.getDay()==0?7:first_day.getDay();
+                var week_num = Math.ceil((day_num - (8 - first_day_name)) / 7.0) + 1;
+                var week_list = [];
+                var day_index = 1;
+
+                var first_week = [];
+                for(var i=1;i<first_day_name;i++) {
+                    first_week.push(0-i);
+                }
+                for(var i=first_day_name;i<8;i++) {
+                    first_week.push(day_index++);
+                }
+                week_list.push(first_week);
+
+                for(var i=1;i<week_num;i++) {
+                    var week = [];
+                    for(var j=1;j<8 && day_index<=day_num;j++) {
+                        week.push(day_index++);
+                    }
+                    week_list.push(week);
+                }
+                return week_list;
+            }
+        },
+        compiled: function () {
+            var d = new Date();
+            this.year = d.getFullYear();
+            this.month = d.getMonth()+1;
+        },
+        methods: {
+            calMonth: function (val) {
+                var month = this.month + val;
+                if(month<1) {
+                    month += 12;
+                    this.year -= 1;
+                }
+                this.month = month;
+            },
+            calYear: function (val) {
+                this.year += val;
+            }
+        }
+
+    })
 </script>
 </body>
 </html>

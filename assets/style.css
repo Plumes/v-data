@@ -1,6 +1,6 @@
 body {
 	background: #f4f7f9;
-    color: #a0a0a0;
+    color: #5d5d5d;
 }
 .panel {
     margin: 10px;
@@ -110,6 +110,8 @@ body {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #calendar .headbar i {
@@ -148,9 +150,13 @@ body {
     margin: 4px;
     border: 0px;
     border-radius: 14px;
+
+    -webkit-user-select: none;
+    user-select: none;
 }
 #calendar .week td.has-data a{
     margin: 2px;
     background-color: skyblue;
     color: #ffffff;
+    cursor: pointer;
 }

@@ -1,12 +1,14 @@
 body {
+    font-size: 100%;
 	background: #f4f7f9;
     color: #5d5d5d;
 }
 .panel {
     margin: 10px;
-    border: 3px solid #eaeded;
     background: #fff;
-    border-radius: 5px;
+    border-radius: 3px;
+    padding: 3px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0 rgba(0,0,0,0.02);
 }
 #menu-btn {
     font-size: 24px;
@@ -15,7 +17,7 @@ body {
     position: absolute;
     left: 0px;
     margin: 16px;
-    top: 0px;
+    top: 0;
     z-index: 1;
     transition: left 0.5s;
 
@@ -26,9 +28,8 @@ body {
     height: 40px;
     border-bottom: 1px solid transparent;
     padding: 8px;
-    /*padding: 12px 104px 11px 64px;*/
 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0 rgba(0,0,0,0.02);
 
     cursor: pointer;
 }
@@ -44,8 +45,8 @@ body {
 	background-color: #ffffff;
 	position: absolute;
 	height: 100%;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
     box-sizing: border-box;
     border-right: 1px solid #e0e0e0;
@@ -77,16 +78,30 @@ body {
     height: 2em;
     line-height: 2em;
     padding: 1em 0em 1em 1em;
-    color: #8ea2ac;
+    color: #5d5d5d;
     font-size: 20px;
     display: block;
     text-decoration: none;
     white-space: nowrap;
 
 }
+
 #left-nav .pure-menu-heading,#left-nav .pure-menu-link {
-    color: #b0bec5;
+    color: #5d5d5d;
+    padding: 5px 20px;
 }
+#left-nav .pure-menu-heading {
+    padding: 3px 0;
+    font-size: 18px;
+}
+
+#left-nav ul.pure-menu-list li.current a {
+    color: deepskyblue;
+}
+ul.pure-menu-list li.current a:hover {
+    background: none;
+}
+
 #calendar {
     margin: 10px;
 }
@@ -95,14 +110,14 @@ body {
     height: 48px;
     line-height: 48px;
     width: 100%;
-    margin: 0px;
-    padding: 0px;
-    font-size: 0px;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
 }
 #calendar .headbar .control {
     box-sizing:border-box;
     border: none;
-    margin: 0px;
+    margin: 0;
     display: inline-block;
     height: 48px;
     line-height: 48px;
@@ -149,7 +164,7 @@ body {
     height: 28px;
     line-height: 28px;
     margin: 4px;
-    border: 0px;
+    border: 0;
     border-radius: 14px;
 
     -webkit-user-select: none;

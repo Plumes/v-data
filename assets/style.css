@@ -161,3 +161,8 @@ body {
     color: #ffffff;
     cursor: pointer;
 }
+
+#calendar .week td.has-data.current a {
+    background-color:#e7c4f2;
+    cursor: default;
+}

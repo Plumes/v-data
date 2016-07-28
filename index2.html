@@ -67,7 +67,7 @@
                     <tbody>
                         <tr v-for="week in week_list">
 
-                            <td v-for="day in week" v-bind:class="{'has-data' : validate_date(day)}" v-on:click="loadData(day)"><a v-if="day > 0">{{ day }}</a></td>
+                            <td v-for="day in week" v-bind:class="{'has-data' : validate_date(day), 'current': year*10000+month*100+day==current_day}" v-on:click="loadData(day)"><a v-if="day > 0">{{ day }}</a></td>
                         </tr>
                     </tbody>
                 </table>
@@ -95,7 +95,8 @@
             valid_date: [],
             heat_data:[],
             data_url: 'http://192.168.33.10/dv/data/',
-            mapv:{}
+            mapv:{},
+            current_day:-1
         },
         computed: {
             week_list: function () {
@@ -166,6 +167,7 @@
         },
         methods: {
             calMonth: function (val) {
+                //月份的加减运算
                 var month = this.month + val;
                 if(month<1) {
                     month += 12;
@@ -177,13 +179,20 @@
                 this.month = month;
             },
             calYear: function (val) {
+                //年份的加减运算
                 this.year += val;
             },
             validate_date : function (day) {
+                //判断当前日期是否是有数据的
                 return this.valid_date.indexOf(day)>-1;
             },
             loadData:function (day) {
                 var date = this.year * 10000 + this.month * 100 + day;
+
+                //避免重复加载和无效加载
+                if(date==this.current_day || !this.validate_date(day)) {
+                    return false;
+                }
                 var data_url = this.data_url+"phone_heat_data_"+date+".json";
                 this.$http.get(data_url).then(function (response) {
                     this.heat_data = [];
@@ -195,6 +204,7 @@
                             count:resp_data['heatdata'][i][2],
                         });
                     }
+                    this.current_day = date;
                     this.renderData();
                 }, function (response) {
                     return false;

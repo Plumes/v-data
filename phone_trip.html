@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-	<link rel="stylesheet" href="assets/pure-0.6.0-min.css">
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/pure-0.6.0-min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
 
-	<script src='assets/jquery-3.1.0.slim.min.js'></script>
+    <script src='assets/jquery-3.1.0.slim.min.js'></script>
     <script src="assets/vue.js"></script>
     <script src="assets/vue-resource-0.9.3.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
@@ -24,10 +24,10 @@
     </div>
 
     <ul class="pure-menu-list">
-    	<li class="pure-menu-heading current"><a href="#" class="pure-menu-link">数据概况</a></li>
-    	<li class="pure-menu-heading"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
-    	<li class="pure-menu-heading"><a href="#" class="pure-menu-link">出行模式</a></li>
-    	<li class="pure-menu-heading"><a href="#" class="pure-menu-link">区域分析</a></li>
+        <li class="pure-menu-heading"><a href="index.html" class="pure-menu-link">数据概况</a></li>
+        <li class="pure-menu-heading current"><a href="#" class="pure-menu-link">单日出行链</a></li>
+        <li class="pure-menu-heading"><a href="#" class="pure-menu-link">出行模式</a></li>
+        <li class="pure-menu-heading"><a href="#" class="pure-menu-link">区域分析</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">居住地</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作地</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">休闲地</a></li>
@@ -55,15 +55,15 @@
 
                 <table class="week">
                     <thead>
-                        <tr>
-                            <th v-for="day_name in day_name_list">{{ day_name }}</th>
-                        </tr>
+                    <tr>
+                        <th v-for="day_name in day_name_list">{{ day_name }}</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="week in week_list">
+                    <tr v-for="week in week_list">
 
-                            <td v-for="day in week" v-bind:class="{'has-data' : validate_date(day), 'current': year*10000+month*100+day==current_day}" v-on:click="loadData(day)"><a v-if="day > 0">{{ day }}</a></td>
-                        </tr>
+                        <td v-for="day in week" v-bind:class="{'has-data' : validate_date(day), 'current': year*10000+month*100+day==current_day}" v-on:click="loadData(day)"><a v-if="day > 0">{{ day }}</a></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -90,7 +90,7 @@
     </div>
 </div>
 <script>
-	$("#menu-btn").click(function () {
+    $("#menu-btn").click(function () {
         $("#left-nav").addClass("is-visible");
     });
     $("#hide-menu-btn").click(function () {

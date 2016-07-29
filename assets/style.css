@@ -3,12 +3,36 @@ body {
 	background: #f4f7f9;
     color: #5d5d5d;
 }
+.container {
+    position: absolute;
+    width: 100%;
+    overflow: hidden;
+}
+.container .left-col {
+    overflow: hidden;
+    zoom: 1;
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+    height: 100%;
+}
+.container .right-col {
+    float: right;
+    width: 400px;
+    zoom: 1;
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+}
 .panel {
     margin: 10px;
     background: #fff;
     border-radius: 3px;
-    padding: 3px 0;
+    padding: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0 rgba(0,0,0,0.02);
+    overflow: hidden;
 }
 #menu-btn {
     font-size: 24px;
@@ -103,7 +127,7 @@ ul.pure-menu-list li.current a:hover {
 }
 
 #calendar {
-    margin: 10px;
+    margin: 0;
 }
 #calendar .headbar {
     box-sizing:border-box;

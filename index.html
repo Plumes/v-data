@@ -12,6 +12,7 @@
     <script src="assets/vue-resource-0.9.3.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
     <script src="assets/mapv.js"></script>
+    <script src="assets/map_style.js"></script>
     <script src="data/phone_heat_sel.json"></script>
     <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
 </head>
@@ -185,6 +186,9 @@ var calendar = new Vue({
         bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
         bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
         bmap.enableContinuousZoom();
+        bmap.setMapStyle({
+            styleJson: map_style
+        });
         // 第一步创建mapv示例
         var mapv = new Mapv({
             drawTypeControl: true,
@@ -235,7 +239,7 @@ var calendar = new Vue({
                     this.mapv.data.push({
                         lng:resp_data['heatdata'][i][0],
                         lat:resp_data['heatdata'][i][1],
-                        count:resp_data['heatdata'][i][2],
+                        count:resp_data['heatdata'][i][2]*100,
                     });
                 }
 
@@ -262,7 +266,7 @@ var calendar = new Vue({
 
         },
         renderMap: function () {
-            this.mapv.el._map.centerAndZoom(new BMap.Point(this.mapv.data[0]['lng'], this.mapv.data[0]['lat']), 9);
+            this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 11);
             var layer = new Mapv.Layer({
                 mapv: this.mapv.el, // 对应的mapv实例
                 zIndex: 1, // 图层层级
@@ -272,15 +276,15 @@ var calendar = new Vue({
                 drawOptions: { // 绘制参数
                     shoadowBlur: 15, // 是否有模糊效果
                     unit: 'm', // 单位,px:像素(默认),m:米
-                    max: 1, // 设置显示的权重最大值
+                    max: 100, // 设置显示的权重最大值
                     type: 'circle', // 点形状,可选circle:圆形(默认),rect:矩形
                     size: 3000, // 半径大小
                     maxOpacity: 0.8,
                     gradient: { // 显示的颜色渐变范围
                         '0': 'blue',
-                        '0.6': 'cyan',
-                        '0.7': 'lime',
-                        '0.8': 'yellow',
+                        '0.3': 'cyan',
+                        '0.6': 'lime',
+                        '0.9': 'yellow',
                         '1.0': 'red'
                     }
                 }

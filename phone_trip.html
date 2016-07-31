@@ -12,6 +12,7 @@
     <script src="assets/vue-resource-0.9.3.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
     <script src="assets/mapv.js"></script>
+    <script src="assets/map_style.js"></script>
     <script src="data/phone_heat_sel.json"></script>
     <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
 </head>
@@ -185,6 +186,10 @@
             bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
             bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
             bmap.enableContinuousZoom();
+
+            bmap.setMapStyle({
+                styleJson: map_style
+            });
             // 第一步创建mapv示例
             var mapv = new Mapv({
                 drawTypeControl: true,

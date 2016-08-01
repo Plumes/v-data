@@ -13,7 +13,7 @@
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
     <script src="assets/mapv.js"></script>
     <script src="assets/map_style.js"></script>
-    <script src="data/phone_heat_sel.json"></script>
+    <script src="data/date/date_list.js"></script>
     <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
 </head>
 <body>
@@ -231,7 +231,7 @@ var calendar = new Vue({
             if(date==this.current_day || !this.validate_date(day)) {
                 return false;
             }
-            var data_url = this.data_url+"phone_heat_data_"+date+".json";
+            var data_url = this.data_url+"date/"+date+"/heat.json";
             this.$http.get(data_url).then(function (response) {
                 this.mapv.data = [];
                 var resp_data = response.json();
@@ -242,18 +242,38 @@ var calendar = new Vue({
                         count:resp_data['heatdata'][i][2]*100,
                     });
                 }
+                this.current_day = date;
+                this.renderMap();
+            }, function (response) {
+                return false;
+            });
 
+            var data_url = this.data_url+"date/"+date+"/line.json";
+            this.$http.get(data_url).then(function (response) {
+                var resp_data = response.json();
                 this.figure_1.data['line_data1'] = resp_data['line_data'];
                 this.figure_1.data['line_data2'] = resp_data['line_data2'];
+                this.renderFig1();
+            }, function (response) {
+                return false;
+            });
 
+            var data_url = this.data_url+"date/"+date+"/count.json";
+            this.$http.get(data_url).then(function (response) {
+                var resp_data = response.json();
                 this.figure_2.data['lengend_data'] = resp_data['count_legend_data'];
                 this.figure_2.data['count_data'] = resp_data['count_data'];
+                this.renderFig2();
+            }, function (response) {
+                return false;
+            });
 
+            var data_url = this.data_url+"date/"+date+"/update.json";
+            this.$http.get(data_url).then(function (response) {
+                var resp_data = response.json();
                 this.figure_3.data['lengend_data'] = resp_data['update_legend_data'];
                 this.figure_3.data['update_data'] = resp_data['update_data'];
-
-                this.current_day = date;
-                this.renderData();
+                this.renderFig3();
             }, function (response) {
                 return false;
             });
@@ -266,7 +286,7 @@ var calendar = new Vue({
 
         },
         renderMap: function () {
-            this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 11);
+            this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
             var layer = new Mapv.Layer({
                 mapv: this.mapv.el, // 对应的mapv实例
                 zIndex: 1, // 图层层级

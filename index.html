@@ -261,7 +261,7 @@ var calendar = new Vue({
             var data_url = this.data_url+"date/"+date+"/count.json";
             this.$http.get(data_url).then(function (response) {
                 var resp_data = response.json();
-                this.figure_2.data['lengend_data'] = resp_data['count_legend_data'];
+                this.figure_2.data['legend_data'] = resp_data['count_legend_data'];
                 this.figure_2.data['count_data'] = resp_data['count_data'];
                 this.renderFig2();
             }, function (response) {
@@ -271,7 +271,7 @@ var calendar = new Vue({
             var data_url = this.data_url+"date/"+date+"/update.json";
             this.$http.get(data_url).then(function (response) {
                 var resp_data = response.json();
-                this.figure_3.data['lengend_data'] = resp_data['update_legend_data'];
+                this.figure_3.data['legend_data'] = resp_data['update_legend_data'];
                 this.figure_3.data['update_data'] = resp_data['update_data'];
                 this.renderFig3();
             }, function (response) {
@@ -382,7 +382,7 @@ var calendar = new Vue({
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: this.figure_2.data.lengend_data
+                    data: this.figure_2.data.legend_data
                 },
                 series : [
                     {
@@ -408,7 +408,7 @@ var calendar = new Vue({
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: this.figure_3.data.lengend_data
+                    data: this.figure_3.data.legend_data
                 },
                 series : [
                     {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
@@ -10,11 +10,14 @@
     <script src='assets/jquery-3.1.0.slim.min.js'></script>
     <script src="assets/vue.js"></script>
     <script src="assets/vue-resource-0.9.3.min.js"></script>
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
-    <script src="assets/mapv.js"></script>
-    <script src="assets/map_style.js"></script>
     <script src="data/date/date_list.js"></script>
+    <script src="assets/map_style.js"></script>
     <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
+
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+
 </head>
 <body>
 <div id="menu-btn"><i class="material-icons">menu</i></div>
@@ -80,6 +83,18 @@
 
     <div class="left-col">
         <div class="panel" style="height: 594px;">
+            <div class="omnibox-container">
+                <div class="omnibox">
+                    <div class="resultbox">
+                        <i class="material-icons">account_box</i>
+                        <div class="result">全部</div>
+                        <i class="material-icons arrow">keyboard_arrow_down</i>
+                    </div>
+                    <ul class="suggestion-list">
+                        <li class="suggestion" v-for="user in user_list" v-on:click="loadTripMap(user)">{{ user }}</li>
+                    </ul>
+                </div>
+            </div>
             <div id="bmap" style="height: 100%;">
 
             </div>
@@ -91,25 +106,33 @@
     </div>
 </div>
 <script>
+    var planePath = 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z';
+
     $("#menu-btn").click(function () {
         $("#left-nav").addClass("is-visible");
     });
     $("#hide-menu-btn").click(function () {
         $("#left-nav").removeClass("is-visible");
     });
+    $(".arrow").click(function () {
+        $(".resultbox").toggleClass("list-shown");
+        $(".arrow").toggleClass("upward");
+        $(".suggestion-list").toggle();
+    })
     Vue.config.devtools = true;
 
-    var calendar = new Vue({
-        el:'#calendar',
+    var app = new Vue({
+        el:'body',
         data: {
             year : 0,
             month : 0,
             day_name_list : ['一','二','三','四','五','六','日'],
             valid_date: [],
             data_url: 'http://192.168.33.10/dv/data/',
+            user_list:[],
             mapv:{
                 el:{},
-                data:[]
+                data:{}
             },
             figure_1:{
                 el:{},
@@ -177,24 +200,25 @@
 
         },
         ready: function () {
-            // 创建Map实例
-            var bmap = new BMap.Map('bmap', {
-                enableMapClick: false,
-                minZoom: 4
-                //vectorMapLevel: 3
-            });
-            bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
-            bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
-            bmap.enableContinuousZoom();
-            bmap.setMapStyle({
-                styleJson: map_style
-            });
-            // 第一步创建mapv示例
-            var mapv = new Mapv({
-                drawTypeControl: true,
-                map: bmap  // 百度地图的map实例
-            });
-            this.mapv.el = mapv;
+//            // 创建Map实例
+//            var bmap = new BMap.Map('bmap', {
+//                enableMapClick: false,
+//                minZoom: 4
+//                //vectorMapLevel: 3
+//            });
+//            bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
+//            bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+//            bmap.enableContinuousZoom();
+//            bmap.setMapStyle({
+//                styleJson: map_style
+//            });
+//            // 第一步创建mapv示例
+//            var mapv = new Mapv({
+//                drawTypeControl: true,
+//                map: bmap  // 百度地图的map实例
+//            });
+//            this.mapv.el = mapv;
+            this.mapv.el = echarts.init(document.getElementById('bmap'));
 
             this.figure_1.el = echarts.init(document.getElementById('fig-1'));
             this.figure_2.el = echarts.init(document.getElementById('fig-2'));
@@ -231,22 +255,30 @@
                 if(date==this.current_day || !this.validate_date(day)) {
                     return false;
                 }
-                var data_url = this.data_url+"date/"+date+"/heat.json";
+                var data_url = this.data_url+"dateid/"+date+"/user-list.json";
                 this.$http.get(data_url).then(function (response) {
-                    this.mapv.data = [];
-                    var resp_data = response.json();
-                    for(var i in resp_data['heatdata']) {
-                        this.mapv.data.push({
-                            lng:resp_data['heatdata'][i][0],
-                            lat:resp_data['heatdata'][i][1],
-                            count:resp_data['heatdata'][i][2]*100,
-                        });
-                    }
                     this.current_day = date;
-                    this.renderMap();
-                }, function (response) {
+                    this.user_list = response.json();
+                },function (response) {
                     return false;
-                });
+                })
+
+//                var data_url = this.data_url+"date/"+date+"/heat.json";
+//                this.$http.get(data_url).then(function (response) {
+//                    this.mapv.data = [];
+//                    var resp_data = response.json();
+//                    for(var i in resp_data['heatdata']) {
+//                        this.mapv.data.push({
+//                            lng:resp_data['heatdata'][i][0],
+//                            lat:resp_data['heatdata'][i][1],
+//                            count:resp_data['heatdata'][i][2]*100,
+//                        });
+//                    }
+//                    this.current_day = date;
+//                    this.renderMap();
+//                }, function (response) {
+//                    return false;
+//                });
 
                 var data_url = this.data_url+"dateid/"+date+"/line.json";
                 this.$http.get(data_url).then(function (response) {
@@ -285,30 +317,124 @@
                 this.renderFig3();
 
             },
-            renderMap: function () {
-                this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                var layer = new Mapv.Layer({
-                    mapv: this.mapv.el, // 对应的mapv实例
-                    zIndex: 1, // 图层层级
-                    dataType: 'point', // 数据类型，点类型
-                    data: this.mapv.data, // 数据
-                    drawType: 'heatmap', // 展示形式
-                    drawOptions: { // 绘制参数
-                        shoadowBlur: 15, // 是否有模糊效果
-                        unit: 'm', // 单位,px:像素(默认),m:米
-                        max: 100, // 设置显示的权重最大值
-                        type: 'circle', // 点形状,可选circle:圆形(默认),rect:矩形
-                        size: 3000, // 半径大小
-                        maxOpacity: 0.8,
-                        gradient: { // 显示的颜色渐变范围
-                            '0': 'blue',
-                            '0.3': 'cyan',
-                            '0.6': 'lime',
-                            '0.9': 'yellow',
-                            '1.0': 'red'
-                        }
-                    }
+            loadTripMap: function (user) {
+                console.log(user);
+                if(this.mapv.data[user]===undefined) {
+                    var data_url = this.data_url+"dateid/"+this.current_day+"/" + user + "/point2.json";
+                    this.$http.get(data_url).then(function (response) {
+                        this.mapv.data[user] = response.json();
+                        this.renderMap(user);
+                    }, function (response) {
+                        return false;
+                    });
+
+                } else {
+                    this.renderMap(user);
+                }
+            },
+            renderMap: function (user) {
+                //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
+                var arc_data = this.mapv.data[user].map(function (arc) {
+                    console.log(arc);
+                    return {fromName:'1',toName:'2',coords:[arc['from'],arc['to']]};
                 });
+                var series = [];
+                series.push({
+                            name: 'beijing' + ' Top10',
+                            type: 'lines',
+                            zlevel: 1,
+                            effect: {
+                                show: true,
+                                period: 6,
+                                trailLength: 0.7,
+                                color: '#fff',
+                                symbolSize: 3
+                            },
+                            lineStyle: {
+                                normal: {
+                                    color: '#ff0000',
+                                    width: 0,
+                                    curveness: 0.2
+                                }
+                            },
+                            data: arc_data
+                        },
+                        {
+                            name: 'beijing' + ' Top10',
+                            type: 'lines',
+                            zlevel: 2,
+                            effect: {
+                                show: true,
+                                period: 6,
+                                trailLength: 0,
+                                symbol: planePath,
+                                symbolSize: 15
+                            },
+                            lineStyle: {
+                                normal: {
+                                    color: '#ff0000',
+                                    width: 1,
+                                    opacity: 0.4,
+                                    curveness: 0.2
+                                }
+                            },
+                            data: arc_data
+                        });
+
+
+    option = {
+        bmap: {
+            center: [116.46, 39.92],
+            zoom: 10,
+            roam: true,
+            mapStyle: {
+                'styleJson': map_style
+            }
+        },
+        backgroundColor: '#404a59',
+        title : {
+            text: '模拟迁徙',
+            subtext: '数据纯属虚构',
+            left: 'center',
+            textStyle : {
+                color: '#fff'
+            }
+        },
+        tooltip : {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            top: 'bottom',
+            left: 'right',
+            data:['beijing Top10'],
+            textStyle: {
+                color: '#fff'
+            },
+            selectedMode: 'single'
+        },
+        geo: {
+            map: 'china',
+            label: {
+                emphasis: {
+                    show: false
+                }
+            },
+            roam: true,
+            itemStyle: {
+                normal: {
+                    areaColor: '#323c48',
+                    borderColor: '#404a59'
+                },
+                emphasis: {
+                    areaColor: '#2a333d'
+                }
+            }
+        },
+        series: series
+    };
+
+                this.mapv.el.setOption(option);
             },
             renderFig1: function () {
                 var option = {

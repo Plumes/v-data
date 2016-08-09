@@ -33,6 +33,7 @@ body {
     padding: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0 rgba(0,0,0,0.02);
     overflow: hidden;
+    position: relative;
 }
 #menu-btn {
     font-size: 24px;
@@ -204,4 +205,87 @@ ul.pure-menu-list li.current a:hover {
 #calendar .week td.has-data.current a {
     background-color:#e7c4f2;
     cursor: default;
+}
+
+/*phonetrip*/
+.omnibox-container {
+    top: 0;
+    right: 0;
+    position: absolute;
+    z-index: 4;
+}
+.omnibox {
+    margin: 20px 20px 8px 0;
+}
+.resultbox {
+    font-size: 0px;
+    display: inline-block;
+    position: relative;
+    background: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+    width: 120px;
+    height: 40px;
+    line-height: 40px;
+    cursor: default;
+    color: #424242;
+    /*box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);*/
+}
+.resultbox i {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 3px;
+}
+.resultbox .result {
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: middle;
+    width: 60px;
+}
+.resultbox .arrow.upward{
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.resultbox.list-shown {
+    border-radius: 2px 2px 0 0;
+}
+ul {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    vertical-align: baseline;
+    background: transparent;
+    list-style: none;
+    overflow: visible;
+}
+.suggestion-list {
+    display: none;
+    background-color: #fff;
+    border-radius: 0 0 2px 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 15px;
+    overflow: hidden;
+    width: 120px;
+}
+.suggestion {
+    position: relative;
+    color: #5d5d5d;
+    font-size: 16px;
+    line-height: 24px;
+    min-height: 24px;
+    padding-top: 6px;
+    padding-left: 30px;
+    padding-bottom: 7px;
+    border-top: 1px solid #e6e6e6;
+    cursor: default;
+    direction: ltr;
+    text-align: left;
+}
+.suggestion:hover {
+    background-color: #fafafa;
 }

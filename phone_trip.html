@@ -15,8 +15,7 @@
     <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
 
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
 
 </head>
 <body>
@@ -87,7 +86,7 @@
                 <div class="omnibox">
                     <div class="resultbox">
                         <i class="material-icons">account_box</i>
-                        <div class="result">全部</div>
+                        <div class="result">{{ current_user }}</div>
                         <i class="material-icons arrow">keyboard_arrow_down</i>
                     </div>
                     <ul class="suggestion-list">
@@ -130,6 +129,7 @@
             valid_date: [],
             data_url: 'http://192.168.33.10/dv/data/',
             user_list:[],
+            current_user:'全部',
             mapv:{
                 el:{},
                 data:{}
@@ -200,26 +200,7 @@
 
         },
         ready: function () {
-//            // 创建Map实例
-//            var bmap = new BMap.Map('bmap', {
-//                enableMapClick: false,
-//                minZoom: 4
-//                //vectorMapLevel: 3
-//            });
-//            bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
-//            bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
-//            bmap.enableContinuousZoom();
-//            bmap.setMapStyle({
-//                styleJson: map_style
-//            });
-//            // 第一步创建mapv示例
-//            var mapv = new Mapv({
-//                drawTypeControl: true,
-//                map: bmap  // 百度地图的map实例
-//            });
-//            this.mapv.el = mapv;
             this.mapv.el = echarts.init(document.getElementById('bmap'));
-
             this.figure_1.el = echarts.init(document.getElementById('fig-1'));
             this.figure_2.el = echarts.init(document.getElementById('fig-2'));
             this.figure_3.el = echarts.init(document.getElementById('fig-3'));
@@ -259,26 +240,10 @@
                 this.$http.get(data_url).then(function (response) {
                     this.current_day = date;
                     this.user_list = response.json();
+                    this.loadTripMap(this.user_list[0]);
                 },function (response) {
                     return false;
                 })
-
-//                var data_url = this.data_url+"date/"+date+"/heat.json";
-//                this.$http.get(data_url).then(function (response) {
-//                    this.mapv.data = [];
-//                    var resp_data = response.json();
-//                    for(var i in resp_data['heatdata']) {
-//                        this.mapv.data.push({
-//                            lng:resp_data['heatdata'][i][0],
-//                            lat:resp_data['heatdata'][i][1],
-//                            count:resp_data['heatdata'][i][2]*100,
-//                        });
-//                    }
-//                    this.current_day = date;
-//                    this.renderMap();
-//                }, function (response) {
-//                    return false;
-//                });
 
                 var data_url = this.data_url+"dateid/"+date+"/line.json";
                 this.$http.get(data_url).then(function (response) {
@@ -318,121 +283,93 @@
 
             },
             loadTripMap: function (user) {
-                console.log(user);
+                this.current_user = user;
                 if(this.mapv.data[user]===undefined) {
-                    var data_url = this.data_url+"dateid/"+this.current_day+"/" + user + "/point2.json";
+                    var data_url = this.data_url+"dateid/"+this.current_day+"/" + user + "/point.json";
                     this.$http.get(data_url).then(function (response) {
                         this.mapv.data[user] = response.json();
                         this.renderMap(user);
                     }, function (response) {
                         return false;
                     });
-
                 } else {
                     this.renderMap(user);
                 }
             },
             renderMap: function (user) {
                 //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                var arc_data = this.mapv.data[user].map(function (arc) {
-                    console.log(arc);
-                    return {fromName:'1',toName:'2',coords:[arc['from'],arc['to']]};
+                var points_data = this.mapv.data[user];
+                var special_point_list = [{name:points_data[0]['label'],value:points_data[0]['coords']}, {name:points_data[points_data.length-1]['label'],value:points_data[points_data.length-1]['coords']}];
+                var normal_point_list = []
+                for(var i=1; i<points_data.length-1; i++) {
+                    normal_point_list.push({
+                        name:points_data[i]['label'],
+                        value:points_data[i]['coords']
+                    });
+                }
+                var arc_list = {}
+                arc_list['coords'] = points_data.map(function (point) {
+                    return point['coords'];
                 });
-                var series = [];
-                series.push({
-                            name: 'beijing' + ' Top10',
-                            type: 'lines',
-                            zlevel: 1,
-                            effect: {
-                                show: true,
-                                period: 6,
-                                trailLength: 0.7,
-                                color: '#fff',
-                                symbolSize: 3
-                            },
-                            lineStyle: {
-                                normal: {
-                                    color: '#ff0000',
-                                    width: 0,
-                                    curveness: 0.2
-                                }
-                            },
-                            data: arc_data
-                        },
-                        {
-                            name: 'beijing' + ' Top10',
-                            type: 'lines',
-                            zlevel: 2,
-                            effect: {
-                                show: true,
-                                period: 6,
-                                trailLength: 0,
-                                symbol: planePath,
-                                symbolSize: 15
-                            },
-                            lineStyle: {
-                                normal: {
-                                    color: '#ff0000',
-                                    width: 1,
-                                    opacity: 0.4,
-                                    curveness: 0.2
-                                }
-                            },
-                            data: arc_data
-                        });
-
-
-    option = {
-        bmap: {
-            center: [116.46, 39.92],
-            zoom: 10,
-            roam: true,
-            mapStyle: {
-                'styleJson': map_style
-            }
-        },
-        backgroundColor: '#404a59',
-        title : {
-            text: '模拟迁徙',
-            subtext: '数据纯属虚构',
-            left: 'center',
-            textStyle : {
-                color: '#fff'
-            }
-        },
-        tooltip : {
-            trigger: 'item'
-        },
-        legend: {
-            orient: 'vertical',
-            top: 'bottom',
-            left: 'right',
-            data:['beijing Top10'],
-            textStyle: {
-                color: '#fff'
-            },
-            selectedMode: 'single'
-        },
-        geo: {
-            map: 'china',
-            label: {
-                emphasis: {
-                    show: false
-                }
-            },
-            roam: true,
-            itemStyle: {
-                normal: {
-                    areaColor: '#323c48',
-                    borderColor: '#404a59'
-                },
-                emphasis: {
-                    areaColor: '#2a333d'
-                }
-            }
-        },
-        series: series
-    };
+                arc_list['lineStyle'] = {normal:{color:"#e7c4f2"}};
+                var special_point_config = {
+                    type: "effectScatter",
+                    label: {normal: {show: true, position: 'right', formatter: '{b}'}},
+                    itemStyle: {normal: {color:"#e7c4f2"}},
+                    effectType: "ripple",
+                    coordinateSystem: "bmap",
+                    symbolSize:15,
+                    data: special_point_list
+                };
+                var normal_point_config = {
+                    type:'scatter',
+                    label: {normal: {show: true, position: 'right', formatter: '{b}'}},
+                    itemStyle: {normal: {color:"#e7c4f2"}},
+                    symbol: 'circle',
+                    coordinateSystem: "bmap",
+                    symbolSize: 10,
+                    data:normal_point_list
+                };
+                var line1_config = {
+                    type: 'lines',
+                    coordinateSystem: 'bmap',
+                    polyline: true,
+                    data: [arc_list],
+                    silent: true,
+                    lineStyle: {normal: {opacity: 0.4, width: 3}},
+                    progressiveThreshold: 500,
+                    progressive: 200
+                };
+                var line2_config = {
+                    type: 'lines',
+                    coordinateSystem: 'bmap',
+                    polyline: true,
+                    data: [arc_list],
+                    lineStyle: {normal: {width: 0}},
+                    effect: {constantSpeed: 50, show: true, trailLength: 0.2, symbolSize: 4},
+                    zlevel: 1
+                };
+                var series = [special_point_config,normal_point_config,line1_config,line2_config];
+                option = {
+                    bmap: {
+                        center: points_data[0]['coords'],
+                        zoom: 14,
+                        roam: true,
+                        mapStyle: {
+                            'styleJson': map_style
+                        }
+                    },
+                    backgroundColor: '#404a59',
+                    title : {
+                        text: '模拟迁徙',
+                        subtext: '数据纯属虚构',
+                        left: 'center',
+                        textStyle : {
+                            color: '#fff'
+                        }
+                    },
+                    series: series
+                };
 
                 this.mapv.el.setOption(option);
             },
@@ -477,9 +414,7 @@
                             type:'bar',
                             data:this.figure_1.data.line_data1,
                             itemStyle: {
-                                normal: {
-                                    color: 'rgba(124,181,236,0.7)'
-                                }
+                                normal: {color: 'rgba(124,181,236,0.7)'}
                             }
                         },
                         {
@@ -487,16 +422,11 @@
                             type:'line',
                             data:this.figure_1.data.line_data2,
                             itemStyle: {
-                                normal: {
-                                    color: 'rgba(67,67,72,0.7)'
-                                }
+                                normal: {color: 'rgba(67,67,72,0.7)'}
                             }
-
                         }
                     ]
                 };
-
-
                 // 使用刚指定的配置项和数据显示图表。
                 this.figure_1.el.setOption(option);
             },
@@ -547,15 +477,11 @@
                         {
                             type : 'category',
                             data : this.figure_3.data.legend_data,
-                            axisTick: {
-                                alignWithLabel: true
-                            }
+                            axisTick: {alignWithLabel: true}
                         }
                     ],
                     yAxis : [
-                        {
-                            type : 'value'
-                        }
+                        {type : 'value'}
                     ],
                     series : [
                         {

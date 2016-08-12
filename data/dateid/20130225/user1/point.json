@@ -1,35 +1,43 @@
 [
   {
     "coords":[116.414996,40.078708],
-    "label":"013240-071447"
+    "label":"013240-071447",
+    "is_special":true
   },
   {
     "coords":[116.410365,40.065837],
-    "label":"075219"
+    "label":"075219",
+    "is_special":false
   },
   {
     "coords":[116.414449,40.070825],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.413261,40.065607],
-    "label":"075231"
+    "label":"075231",
+    "is_special":true
   },
   {
     "coords":[116.416430,40.036662],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.417268,40.023620],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.417677,40.019424],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.416423,40.009583],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.416455,39.995129],
@@ -37,42 +45,52 @@
   },
   {
     "coords":[116.417818,39.974352],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.471118,39.905799],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.417636,39.981622],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.417636,39.981622],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.417636,39.981622],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.417026,39.993351],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.416697,39.995377],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.416899,40.014953],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.415639,40.038672],
-    "label":"075231"
+    "label":"075231",
+    "is_special":false
   },
   {
     "coords":[116.416222,40.076026],
-    "label":"2192427-230540"
+    "label":"2192427-230540",
+    "is_special":true
   }
 ]

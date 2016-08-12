@@ -299,13 +299,19 @@
             renderMap: function (user) {
                 //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
                 var points_data = this.mapv.data[user];
-                var special_point_list = [{name:points_data[0]['label'],value:points_data[0]['coords']}, {name:points_data[points_data.length-1]['label'],value:points_data[points_data.length-1]['coords']}];
+                var special_point_list = [];
                 var normal_point_list = []
-                for(var i=1; i<points_data.length-1; i++) {
-                    normal_point_list.push({
+                for(var i=0; i<points_data.length; i++) {
+                    var point = {
                         name:points_data[i]['label'],
                         value:points_data[i]['coords']
-                    });
+                    };
+                    if(points_data[i]["is_special"]===true) {
+                        special_point_list.push(point);
+                    } else {
+                        normal_point_list.push(point);
+                    }
+
                 }
                 var arc_list = {}
                 arc_list['coords'] = points_data.map(function (point) {

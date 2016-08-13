@@ -90,7 +90,8 @@
                         <i class="material-icons arrow">keyboard_arrow_down</i>
                     </div>
                     <ul class="suggestion-list">
-                        <li class="suggestion" v-for="user in user_list" v-on:click="loadTripMap(user)">{{ user }}</li>
+                        <li class="suggestion" v-on:click="loadTripMap(0)"><i class="material-icons">fiber_manual_record</i>全部</li>
+                        <li class="suggestion" v-for="user in user_list" v-on:click="loadTripMap(user)" ><i class="material-icons" v-bind:style="{color: user_color_list[user]}">fiber_manual_record</i>{{ user }}</li>
                     </ul>
                 </div>
             </div>
@@ -105,8 +106,6 @@
     </div>
 </div>
 <script>
-    var planePath = 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z';
-
     $("#menu-btn").click(function () {
         $("#left-nav").addClass("is-visible");
     });
@@ -129,10 +128,16 @@
             valid_date: [],
             data_url: 'http://192.168.33.10/dv/data/',
             user_list:[],
+            user_color_list: {},
             current_user:'全部',
             mapv:{
                 el:{},
-                data:{}
+                raw_data:{},
+                data:{
+                    special_point_list:[],
+                    normal_point_list:[],
+                    arc_list:[]
+                }
             },
             figure_1:{
                 el:{},
@@ -237,13 +242,27 @@
                     return false;
                 }
                 var data_url = this.data_url+"dateid/"+date+"/user-list.json";
+                this.mapv.raw_data = {};
+                this.mapv.data = {
+                    special_point_list:[],
+                    normal_point_list:[],
+                    arc_list:[]
+                };
+                this.user_color_list = {};
                 this.$http.get(data_url).then(function (response) {
                     this.current_day = date;
                     this.user_list = response.json();
-                    this.loadTripMap(this.user_list[0]);
+
+                    var color_list = ['3FB8AF','FF9E9D','FF3D7F','FA6900','41A1E1'];
+                    for(var i in this.user_list) {
+                        var rand_index = Math.floor(Math.random() * color_list.length);
+                        this.user_color_list[this.user_list[i]] = '#'+color_list[rand_index];
+                    }
+
+                    this.loadTripMap(0);
                 },function (response) {
                     return false;
-                })
+                });
 
                 var data_url = this.data_url+"dateid/"+date+"/line.json";
                 this.$http.get(data_url).then(function (response) {
@@ -282,42 +301,71 @@
                 this.renderFig3();
 
             },
-            loadTripMap: function (user) {
-                this.current_user = user;
-                if(this.mapv.data[user]===undefined) {
-                    var data_url = this.data_url+"dateid/"+this.current_day+"/" + user + "/point.json";
-                    this.$http.get(data_url).then(function (response) {
-                        this.mapv.data[user] = response.json();
-                        this.renderMap(user);
-                    }, function (response) {
-                        return false;
-                    });
-                } else {
-                    this.renderMap(user);
-                }
-            },
-            renderMap: function (user) {
-                //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                var points_data = this.mapv.data[user];
+            convertMapData: function (user, points_data) {
                 var special_point_list = [];
-                var normal_point_list = []
+                var normal_point_list = [];
+                var arc_list = {coords:[],lineStyle:{}};
                 for(var i=0; i<points_data.length; i++) {
                     var point = {
                         name:points_data[i]['label'],
-                        value:points_data[i]['coords']
+                        value:points_data[i]['coords'],
+                        itemStyle: {normal: {color:this.user_color_list[user]}},
                     };
                     if(points_data[i]["is_special"]===true) {
                         special_point_list.push(point);
                     } else {
                         normal_point_list.push(point);
                     }
-
+                    arc_list.coords.push(points_data[i]['coords'])
                 }
-                var arc_list = {}
-                arc_list['coords'] = points_data.map(function (point) {
-                    return point['coords'];
+                arc_list['lineStyle'] = {normal:{color:this.user_color_list[user]}};
+
+                this.mapv.data.special_point_list = this.mapv.data.special_point_list.concat(special_point_list);
+                this.mapv.data.normal_point_list = this.mapv.data.normal_point_list.concat(normal_point_list);
+                this.mapv.data.arc_list.push(arc_list);
+            },
+            loadTripMap: function (user) {
+                this.mapv.data = {
+                    special_point_list:[],
+                    normal_point_list:[],
+                    arc_list:[]
+                };
+                var user_list = [];
+                if(user===0) {
+                    this.current_user= '全部';
+                    user_list = this.user_list;
+                } else {
+                    this.current_user = user;
+                    user_list = [user];
+                }
+
+                //需要使用闭包避免异步程序完成后变量值覆盖
+                user_list.forEach(function (item, index) {
+                    var user = item;
+                    if(app.mapv.raw_data[user]===undefined) {
+                        var data_url = app.data_url+"dateid/"+app.current_day+"/" + user + "/point.json";
+                        Vue.http.get(data_url).then(function (response) {
+                            app.mapv.raw_data[user] = response.json();
+                            app.convertMapData( user, app.mapv.raw_data[user] );
+                            app.renderMap(user);
+                        }, function (response) {
+                            return false;
+                        });
+                    } else {
+                        app.convertMapData( user, app.mapv.raw_data[user] );
+                        app.renderMap(user);
+                    }
                 });
-                arc_list['lineStyle'] = {normal:{color:"#e7c4f2"}};
+
+            },
+            renderMap: function (user) {
+                //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
+                if(this.current_user=='全部') {
+                    if(Object.keys(this.mapv.raw_data).length !==this.user_list.length) {
+                        return false;
+                    }
+                }
+
                 var special_point_config = {
                     type: "effectScatter",
                     label: {normal: {show: true, position: 'right', formatter: '{b}'}},
@@ -325,7 +373,7 @@
                     effectType: "ripple",
                     coordinateSystem: "bmap",
                     symbolSize:15,
-                    data: special_point_list
+                    data: this.mapv.data.special_point_list
                 };
                 var normal_point_config = {
                     type:'scatter',
@@ -334,13 +382,13 @@
                     symbol: 'circle',
                     coordinateSystem: "bmap",
                     symbolSize: 10,
-                    data:normal_point_list
+                    data: this.mapv.data.normal_point_list
                 };
                 var line1_config = {
                     type: 'lines',
                     coordinateSystem: 'bmap',
                     polyline: true,
-                    data: [arc_list],
+                    data: this.mapv.data.arc_list,
                     silent: true,
                     lineStyle: {normal: {opacity: 0.4, width: 3}},
                     progressiveThreshold: 500,
@@ -350,16 +398,17 @@
                     type: 'lines',
                     coordinateSystem: 'bmap',
                     polyline: true,
-                    data: [arc_list],
+                    data: this.mapv.data.arc_list,
                     lineStyle: {normal: {width: 0}},
                     effect: {constantSpeed: 50, show: true, trailLength: 0.2, symbolSize: 4},
                     zlevel: 1
                 };
                 var series = [special_point_config,normal_point_config,line1_config,line2_config];
+                //var series = [special_point_config,normal_point_config];
                 option = {
                     bmap: {
-                        center: points_data[0]['coords'],
-                        zoom: 14,
+                        center: [116.406833, 39.91527],
+                        zoom: 12,
                         roam: true,
                         mapStyle: {
                             'styleJson': map_style

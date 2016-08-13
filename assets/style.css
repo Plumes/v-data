@@ -278,9 +278,7 @@ ul {
     font-size: 16px;
     line-height: 24px;
     min-height: 24px;
-    padding-top: 6px;
-    padding-left: 30px;
-    padding-bottom: 7px;
+    padding: 6px 0 7px 0;
     border-top: 1px solid #e6e6e6;
     cursor: default;
     direction: ltr;
@@ -288,4 +286,11 @@ ul {
 }
 .suggestion:hover {
     background-color: #fafafa;
+}
+.suggestion i {
+    color: transparent;
+    font-size: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 8px;
 }

@@ -224,7 +224,7 @@ ul.pure-menu-list li.current a:hover {
     background: #fff;
     border-radius: 2px;
     box-sizing: border-box;
-    width: 120px;
+    width: 200px;
     height: 40px;
     line-height: 40px;
     cursor: default;
@@ -240,7 +240,7 @@ ul.pure-menu-list li.current a:hover {
     display: inline-block;
     font-size: 16px;
     vertical-align: middle;
-    width: 60px;
+    width: 140px;
 }
 .resultbox .arrow.upward{
     -webkit-transform: rotate(180deg);
@@ -270,7 +270,9 @@ ul {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     font-size: 15px;
     overflow: hidden;
-    width: 120px;
+    width: 200px;
+    height: 88px;
+    overflow-y: scroll;
 }
 .suggestion {
     position: relative;
@@ -283,6 +285,9 @@ ul {
     cursor: default;
     direction: ltr;
     text-align: left;
+}
+.suggestion:last-child {
+    border-radius: 0 0 2px 2px;
 }
 .suggestion:hover {
     background-color: #fafafa;

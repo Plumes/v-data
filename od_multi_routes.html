@@ -28,8 +28,8 @@
 
     <ul class="pure-menu-list">
         <li class="pure-menu-heading"><a href="index.html" class="pure-menu-link">数据概况</a></li>
-        <li class="pure-menu-heading  current"><a href="#" class="pure-menu-link">单日出行链</a></li>
-        <li class="pure-menu-heading"><a href="od_multi_routes.html" class="pure-menu-link">OD多路径分析</a></li>
+        <li class="pure-menu-heading"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
+        <li class="pure-menu-heading current"><a href="#" class="pure-menu-link">OD多路径分析</a></li>
         <li class="pure-menu-heading"><a href="#" class="pure-menu-link">区域分析</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">居住地</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作地</a></li>
@@ -86,12 +86,11 @@
                 <div class="omnibox">
                     <div class="resultbox">
                         <i class="material-icons">account_box</i>
-                        <div class="result">{{ current_user }}</div>
+                        <div class="result">{{ current_od }}</div>
                         <i class="material-icons arrow">keyboard_arrow_down</i>
                     </div>
                     <ul class="suggestion-list">
-                        <li class="suggestion" v-on:click="loadTripMap(0)"><i class="material-icons">fiber_manual_record</i>全部</li>
-                        <li class="suggestion" v-for="user in user_list" v-on:click="loadTripMap(user)" ><i class="material-icons" v-bind:style="{color: user_color_list[user]}">fiber_manual_record</i>{{ user }}</li>
+                        <li class="suggestion" v-for="od in od_list" v-on:click="loadTripMap(od[0].id,od[1].id)" ><i class="material-icons">fiber_manual_record</i>{{ od[0].name }}-{{ od[1].name }}</li>
                     </ul>
                 </div>
             </div>
@@ -127,9 +126,9 @@
             day_name_list : ['一','二','三','四','五','六','日'],
             valid_date: [],
             data_url: 'http://192.168.33.10/dv/data/',
-            user_list:[],
-            user_color_list: {},
-            current_user:'全部',
+            od_list:[],
+            route_color_list: [],
+            current_od:'',
             mapv:{
                 el:{},
                 raw_data:{},
@@ -235,23 +234,17 @@
                 return this.valid_date.indexOf(day)>-1;
             },
             loadData:function (day) {
-                var date = this.year * 10000 + this.month * 100 + day;
 
-                //避免重复加载和无效加载
-                if(date==this.current_day || !this.validate_date(day)) {
-                    return false;
-                }
-                var data_url = this.data_url+"dateid/"+date+"/user-list.json";
+                var data_url = this.data_url+"od/od_list.json";
                 this.mapv.raw_data = {};
                 this.mapv.data = {
                     special_point_list:[],
                     normal_point_list:[],
                     arc_list:[]
                 };
-                this.user_color_list = {};
+                this.route_color_list = {};
                 this.$http.get(data_url).then(function (response) {
-                    this.current_day = date;
-                    this.user_list = response.json();
+                    this.od_list = response.json();
 
                     var color_list = ['3FB8AF','FF9E9D','FF3D7F','FA6900','41A1E1'];
                     for(var i in this.user_list) {
@@ -259,10 +252,17 @@
                         this.user_color_list[this.user_list[i]] = '#'+color_list[rand_index];
                     }
 
-                    this.loadTripMap(0);
+                    //this.loadTripMap(0);
                 },function (response) {
                     return false;
                 });
+
+                var date = this.year * 10000 + this.month * 100 + day;
+
+                //避免重复加载和无效加载
+                if(date==this.current_day || !this.validate_date(day)) {
+                    return false;
+                }
 
                 var data_url = this.data_url+"dateid/"+date+"/line.json";
                 this.$http.get(data_url).then(function (response) {

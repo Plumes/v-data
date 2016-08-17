@@ -85,12 +85,12 @@
             <div class="omnibox-container">
                 <div class="omnibox">
                     <div class="resultbox">
-                        <i class="material-icons">account_box</i>
-                        <div class="result">{{ current_od }}</div>
+                        <i class="material-icons">location_on</i>
+                        <div class="result">{{ current_od[0]['name'] }}-{{ current_od[1]['name'] }}</div>
                         <i class="material-icons arrow">keyboard_arrow_down</i>
                     </div>
                     <ul class="suggestion-list">
-                        <li class="suggestion" v-for="od in od_list" v-on:click="loadTripMap(od[0].id,od[1].id)" ><i class="material-icons">fiber_manual_record</i>{{ od[0].name }}-{{ od[1].name }}</li>
+                        <li class="suggestion" v-for="od in od_list" v-on:click="loadTripMap(od)" ><i class="material-icons">location_on</i>{{ od[0].name }}-{{ od[1].name }}</li>
                     </ul>
                 </div>
             </div>
@@ -127,8 +127,7 @@
             valid_date: [],
             data_url: 'http://192.168.33.10/dv/data/',
             od_list:[],
-            route_color_list: [],
-            current_od:'',
+            current_od:[{id:"",name:""},{id:"",name:""}],
             mapv:{
                 el:{},
                 raw_data:{},
@@ -246,13 +245,12 @@
                 this.$http.get(data_url).then(function (response) {
                     this.od_list = response.json();
 
-                    var color_list = ['3FB8AF','FF9E9D','FF3D7F','FA6900','41A1E1'];
                     for(var i in this.user_list) {
-                        var rand_index = Math.floor(Math.random() * color_list.length);
+
                         this.user_color_list[this.user_list[i]] = '#'+color_list[rand_index];
                     }
 
-                    //this.loadTripMap(0);
+                    this.loadTripMap(this.od_list[0]);
                 },function (response) {
                     return false;
                 });
@@ -301,70 +299,64 @@
                 this.renderFig3();
 
             },
-            convertMapData: function (user, points_data) {
+            convertMapData: function () {
                 var special_point_list = [];
                 var normal_point_list = [];
-                var arc_list = {coords:[],lineStyle:{}};
-                for(var i=0; i<points_data.length; i++) {
-                    var point = {
-                        name:points_data[i]['label'],
-                        value:points_data[i]['coords'],
-                        itemStyle: {normal: {color:this.user_color_list[user]}},
-                    };
-                    if(points_data[i]["is_special"]===true) {
-                        special_point_list.push(point);
-                    } else {
-                        normal_point_list.push(point);
-                    }
-                    arc_list.coords.push(points_data[i]['coords'])
-                }
-                arc_list['lineStyle'] = {normal:{color:this.user_color_list[user]}};
+                this.mapv.data.arc_list = [];
 
-                this.mapv.data.special_point_list = this.mapv.data.special_point_list.concat(special_point_list);
-                this.mapv.data.normal_point_list = this.mapv.data.normal_point_list.concat(normal_point_list);
-                this.mapv.data.arc_list.push(arc_list);
-            },
-            loadTripMap: function (user) {
-                this.mapv.data = {
-                    special_point_list:[],
-                    normal_point_list:[],
-                    arc_list:[]
-                };
-                var user_list = [];
-                if(user===0) {
-                    this.current_user= '全部';
-                    user_list = this.user_list;
-                } else {
-                    this.current_user = user;
-                    user_list = [user];
+                var color_list = ['3FB8AF','FF9E9D','FF3D7F','FA6900','41A1E1'];
+
+                var start_point = this.mapv.raw_data['start'];
+                var end_point = this.mapv.raw_data['end'];
+
+                special_point_list.push({name:start_point['label'], value:start_point['coords'], itemStyle: {normal: {color:"#00A06E"}} })
+                special_point_list.push({name:end_point['label'], value:end_point['coords'], itemStyle: {normal: {color:"#00A06E"}} })
+                var routes = this.mapv.raw_data['routes'];
+                for(var i=0; i<routes.length; i++) {
+                    var rand_index = Math.floor(Math.random() * color_list.length);
+                    var color = '#'+color_list[rand_index];
+                    var lines = routes[i];
+                    for(var j=0; j<lines.length; j++) {
+                        var arc = {coords:[],lineStyle:{}};
+                        var points_data = lines[j];
+
+                        arc.coords.push(start_point['coords'])
+                        for(var k=0; k<points_data.length; k++) {
+                            var point = {
+                                name:points_data[k]['label'],
+                                value:points_data[k]['coords'],
+                                itemStyle: {normal: {color:color}},
+                            };
+                            if(points_data[i]["is_special"]===true) {
+                                special_point_list.push(point);
+                            } else {
+                                normal_point_list.push(point);
+                            }
+                            arc.coords.push(points_data[k]['coords'])
+                        }
+                        arc.coords.push(end_point['coords']);
+                        arc['lineStyle'] = {normal:{color:color}};
+                        this.mapv.data.arc_list.push(arc);
+                    }
                 }
 
-                //需要使用闭包避免异步程序完成后变量值覆盖
-                user_list.forEach(function (item, index) {
-                    var user = item;
-                    if(app.mapv.raw_data[user]===undefined) {
-                        var data_url = app.data_url+"dateid/"+app.current_day+"/" + user + "/point.json";
-                        Vue.http.get(data_url).then(function (response) {
-                            app.mapv.raw_data[user] = response.json();
-                            app.convertMapData( user, app.mapv.raw_data[user] );
-                            app.renderMap(user);
-                        }, function (response) {
-                            return false;
-                        });
-                    } else {
-                        app.convertMapData( user, app.mapv.raw_data[user] );
-                        app.renderMap(user);
-                    }
-                });
+                this.mapv.data.special_point_list = special_point_list;
+                this.mapv.data.normal_point_list = normal_point_list;
 
             },
-            renderMap: function (user) {
-                //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                if(this.current_user=='全部') {
-                    if(Object.keys(this.mapv.raw_data).length !==this.user_list.length) {
-                        return false;
-                    }
-                }
+            loadTripMap: function (od) {
+                var api = this.data_url + "od/" + od[0]['id'] + '_' + od[1]['id'] + '.json';
+                this.$http.get(api).then(function (response) {
+                    this.current_od = od;
+                    this.mapv.raw_data = response.json();
+                    this.convertMapData();
+                    this.renderMap();
+                }, function (response) {
+                    return false;
+                })
+
+            },
+            renderMap: function () {
 
                 var special_point_config = {
                     type: "effectScatter",

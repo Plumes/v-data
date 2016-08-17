@@ -1,3 +1,4 @@
 [
-  [{"id":"guomao","name":"国贸"},{"id":"tiantongyuan","name":"天通苑"}]
+  [{"id":"guomao","name":"国贸"},{"id":"tiantongyuan","name":"天通苑"}],
+  [{"id":"beijingxizhan","name":"北京西站"},{"id":"qinghuadaxue","name":"清华大学"}]
 ]

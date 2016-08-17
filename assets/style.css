@@ -271,7 +271,7 @@ ul {
     font-size: 15px;
     overflow: hidden;
     width: 200px;
-    height: 88px;
+    max-height: 88px;
     overflow-y: scroll;
 }
 .suggestion {
@@ -293,7 +293,7 @@ ul {
     background-color: #fafafa;
 }
 .suggestion i {
-    color: transparent;
+    color: #5d5d5d;
     font-size: 14px;
     display: inline-block;
     vertical-align: middle;

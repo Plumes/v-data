@@ -293,7 +293,7 @@ ul {
     background-color: #fafafa;
 }
 .suggestion i {
-    color: #5d5d5d;
+    color: transparent;
     font-size: 14px;
     display: inline-block;
     vertical-align: middle;

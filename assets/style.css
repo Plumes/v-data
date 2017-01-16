@@ -3,10 +3,44 @@ body {
 	background: #f4f7f9;
     color: #5d5d5d;
 }
-.container {
+body.has-mask {
+    overflow: hidden;
+}
+.mask {
+    background-color: rgba(0,0,0,.5);
+    height: 100%;
+    left: 0;
+    opacity: .1;
+    top: 0;
+    visibility: hidden;
+    width: 100%;
+    z-index: 2;
     position: absolute;
+    transform: translateZ(0);
+}
+.mask.is-visible {
+    visibility: visible;
+    opacity: 1;
+}
+#navbar {
+    width: 100%;
+    height: 60px;
+    background-color: rgb(77,115,151);
+    z-index: 3;
+}
+#navbar .title {
+    color: #eee;
+    font-size: 20px;
+    height: 60px;
+    padding-left: 20px;
+    line-height: 60px;
+    width: 450px;
+}
+.container {
+    position: relative;
     width: 100%;
     overflow: hidden;
+    z-index: 1;
 }
 .container .left-col {
     overflow: hidden;
@@ -36,27 +70,17 @@ body {
     position: relative;
 }
 #menu-btn {
-    font-size: 24px;
-    position: absolute;
-    margin: 8px 0 8px 8px;
-    position: absolute;
-    left: 0px;
-    margin: 16px;
-    top: 0;
-    z-index: 1;
-    transition: left 0.5s;
-
-    background: #fff;
-    border-radius: 2px;
-    box-sizing: border-box;
+    float: right;
+    color: #eeeeee;
     width: 40px;
     height: 40px;
-    border-bottom: 1px solid transparent;
-    padding: 8px;
-
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0 rgba(0,0,0,0.02);
-
+    margin-top: 10px;
+    line-height: 40px;
+    font-size: 20px;
     cursor: pointer;
+}
+#menu-btn i {
+    vertical-align: text-bottom;
 }
 
 #left-nav.is-visible {
@@ -67,15 +91,13 @@ body {
 
 #left-nav {
 	width: 240px;
-	background-color: #ffffff;
+	background-color: rgb(41,53,65);
 	position: absolute;
 	height: 100%;
-	top: 0;
+	top: 60px;
 	left: 0;
 	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
     box-sizing: border-box;
-    border-right: 1px solid #e0e0e0;
-
     -webkit-transform: translateX(-250px);
     -ms-transform: translateX(-250px);
     transform: translateX(-250px);
@@ -88,10 +110,10 @@ body {
     transition-timing-function: cubic-bezier(.4,0,.2,1);
     -webkit-transition-property: -webkit-transform;
     transition-property: transform;
-    color: #424242;
-    overflow: visible;
+    color: #efefef;
+    overflow-x: hidden;
     overflow-y: auto;
-    z-index: 2;
+    z-index: 3;
 }
 #hide-menu-btn {
     position: relative;
@@ -108,25 +130,49 @@ body {
     display: block;
     text-decoration: none;
     white-space: nowrap;
-
 }
 
-#left-nav .pure-menu-heading,#left-nav .pure-menu-link {
-    color: #5d5d5d;
-    padding: 5px 20px;
-}
-#left-nav .pure-menu-heading {
-    padding: 3px 0;
-    font-size: 18px;
+#left-nav .pure-menu-link {
+    color: #efefef;
+    font-size: 20px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 0 0 10px;
+    display: block;
 }
 
-#left-nav ul.pure-menu-list li.current a {
-    color: deepskyblue;
+#left-nav ul.pure-menu-list li.current a:after {
+    content:'';
+    width: 4px;
+    height: 30px;
+    display: block;
+    float: right;
+    margin-top: 5px;
+    background-color: deepskyblue;
 }
-ul.pure-menu-list li.current a:hover {
+ul.pure-menu-list li a:hover {
     background: none;
 }
-
+#left-nav ul.pure-menu-list li.pure-menu-item ul.submenu {
+    display: none;
+    padding-left: 10px;
+}
+#left-nav ul.submenu a {
+    font-size: 16px;
+}
+#left-nav li.pure-menu-item.pure-menu-has-submenu i{
+    float: right;
+    transition: transfrom 1s;
+    vertical-align: middle;
+    line-height: 40px;
+}
+#left-nav li.pure-menu-item.pure-menu-show-submenu i{
+    transform: rotate(90deg);
+}
+#left-nav li.pure-menu-item.pure-menu-show-submenu {
+    background-color: rgb(31,38,48);
+    border-top: 2px solid rgb(27,34,44);
+}
 #calendar {
     margin: 0;
 }
@@ -212,7 +258,7 @@ ul.pure-menu-list li.current a:hover {
     top: 0;
     right: 0;
     position: absolute;
-    z-index: 4;
+    z-index: 1;
 }
 .omnibox {
     margin: 20px 20px 8px 0;

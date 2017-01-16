@@ -17,29 +17,42 @@
     <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
 </head>
 <body>
-<div id="menu-btn"><i class="material-icons">menu</i></div>
-<div class="pure-menu" id="left-nav">
-    <div class="pure-menu-title">
-        数据分析
-        <div id="hide-menu-btn"><i class="material-icons">chevron_left</i></div>
-    </div>
 
+<div id="navbar">
+    <div class="title">
+        <span>基于手机信令数据的城域出行模式分析系统</span>
+        <div id="menu-btn"><i class="material-icons">menu</i></div>
+    </div>
+</div>
+
+<div class="pure-menu" id="left-nav">
     <ul class="pure-menu-list">
-        <li class="pure-menu-heading current"><a href="#" class="pure-menu-link">数据概况</a></li>
-        <li class="pure-menu-heading"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
-        <li class="pure-menu-heading"><a href="od_multi_routes.html" class="pure-menu-link">OD多路径分析</a></li>
-        <li class="pure-menu-heading"><a href="#" class="pure-menu-link">区域分析</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">居住地</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作地</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">休闲地</a></li>
-        <li class="pure-menu-heading"><a href="#" class="pure-menu-link">OD分析</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">居住地</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作地</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">休闲地</a></li>
+        <li class="pure-menu-item current"><a href="#" class="pure-menu-link">数据概况</a></li>
+        <li class="pure-menu-item"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
+        <li class="pure-menu-item pure-menu-has-submenu" >
+
+            <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
+            <ul class="submenu">
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">居住区</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
+            </ul>
+        </li>
+
+        <li class="pure-menu-item pure-menu-has-submenu">
+            <a href="#" class="pure-menu-link">OD热度<i class="material-icons">keyboard_arrow_right</i></a>
+            <ul class="submenu">
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">上班OD</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">回家OD</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">全天OD</a></li>
+            </ul>
+        </li>
+
+        <li class="pure-menu-item"><a href="od_multi_routes.html" class="pure-menu-link">OD轨迹</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">出行模式</a></li>
     </ul>
 </div>
 <div class="container">
-
+    <div class="mask" id="menu-mask"></div>
     <div class="right-col">
         <div class="panel">
             <div id="calendar">
@@ -92,11 +105,14 @@
 </div>
 <script>
 $("#menu-btn").click(function () {
-    $("#left-nav").addClass("is-visible");
+    $("#left-nav").toggleClass("is-visible");
+    $("#menu-mask").toggleClass("is-visible");
+    $("body").toggleClass("has-mask");
 });
-$("#hide-menu-btn").click(function () {
-    $("#left-nav").removeClass("is-visible");
-});
+$(".pure-menu-has-submenu").click(function () {
+    $(this).toggleClass('pure-menu-show-submenu');
+    $(this).find(".submenu").toggle();
+})
 Vue.config.devtools = true;
 
 var calendar = new Vue({

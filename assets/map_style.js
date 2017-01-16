@@ -124,4 +124,10 @@ var map_style = [{
     stylers: {
         color: '#1e1c1c'
     }
+}, {
+    "featureType": "road",
+    "elementType": "labels",
+    "stylers": {
+        "visibility": "off"
+    }
 }];

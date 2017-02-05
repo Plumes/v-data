@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
@@ -10,30 +10,29 @@
     <script src='assets/jquery-3.1.0.slim.min.js'></script>
     <script src="assets/vue.js"></script>
     <script src="assets/vue-resource-0.9.3.min.js"></script>
-    <script src="data/date/date_list.js"></script>
-    <script src="assets/map_style.js"></script>
-    <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=30pq91QAo0Cp7izhHpgmgvR8"></script>
-
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
-
+    <script src="assets/mapv.js"></script>
+    <script src="assets/map_style.js"></script>
+    <script src="data/date/date_list.js"></script>
+    <script src="//cdn.bootcss.com/echarts/3.2.2/echarts.min.js"></script>
 </head>
 <body>
+
 <div id="navbar">
     <div class="title">
         <span>基于手机信令数据的城域出行模式分析系统</span>
     </div>
 </div>
+
 <div class="container">
     <div class="pure-menu" id="left-nav">
         <ul class="pure-menu-list">
-            <li class="pure-menu-item"><a href="#" class="pure-menu-link">数据概况</a></li>
-            <li class="pure-menu-item current"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
-            <li class="pure-menu-item pure-menu-has-submenu" >
-
+            <li class="pure-menu-item"><a href="index.html" class="pure-menu-link">数据概况</a></li>
+            <li class="pure-menu-item"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
+            <li class="pure-menu-item pure-menu-has-submenu pure-menu-show-submenu">
                 <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
-                <ul class="submenu">
-                    <li class="pure-menu-item"><a href="matrix.html" class="pure-menu-link">居住区</a></li>
+                <ul class="submenu" style="display: block;">
+                    <li class="pure-menu-item current"><a href="#" class="pure-menu-link">居住区</a></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
                 </ul>
             </li>
@@ -91,19 +90,6 @@
 
     <div class="left-col">
         <div class="panel" style="height: 594px;">
-            <div class="omnibox-container">
-                <div class="omnibox">
-                    <div class="resultbox">
-                        <i class="material-icons">account_box</i>
-                        <div class="result">{{ current_user }}</div>
-                        <i class="material-icons arrow">keyboard_arrow_down</i>
-                    </div>
-                    <ul class="suggestion-list">
-                        <li class="suggestion" v-on:click="loadTripMap(0)"><i class="material-icons">fiber_manual_record</i>全部</li>
-                        <li class="suggestion" v-for="user in user_list" v-on:click="loadTripMap(user)" ><i class="material-icons" v-bind:style="{color: user_color_list[user]}">fiber_manual_record</i>{{ user }}</li>
-                    </ul>
-                </div>
-            </div>
             <div id="bmap" style="height: 100%;">
 
             </div>
@@ -119,32 +105,19 @@
         $(this).toggleClass('pure-menu-show-submenu');
         $(this).find(".submenu").toggle();
     })
-    $(".arrow").click(function () {
-        $(".resultbox").toggleClass("list-shown");
-        $(".arrow").toggleClass("upward");
-        $(".suggestion-list").toggle();
-    })
     Vue.config.devtools = true;
 
-    var app = new Vue({
-        el:'body',
+    var calendar = new Vue({
+        el:'#calendar',
         data: {
             year : 0,
             month : 0,
             day_name_list : ['一','二','三','四','五','六','日'],
             valid_date: [],
             data_url: 'http://192.168.33.10/dv/data/',
-            user_list:[],
-            user_color_list: {},
-            current_user:'全部',
             mapv:{
                 el:{},
-                raw_data:{},
-                data:{
-                    special_point_list:[],
-                    normal_point_list:[],
-                    arc_list:[]
-                }
+                data:[]
             },
             figure_1:{
                 el:{},
@@ -212,7 +185,25 @@
 
         },
         ready: function () {
-            this.mapv.el = echarts.init(document.getElementById('bmap'));
+            // 创建Map实例
+            var bmap = new BMap.Map('bmap', {
+                enableMapClick: false,
+                minZoom: 4
+                //vectorMapLevel: 3
+            });
+            bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
+            bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+            bmap.enableContinuousZoom();
+            bmap.setMapStyle({
+                styleJson: map_style
+            });
+            // 第一步创建mapv示例
+            var mapv = new Mapv({
+                drawTypeControl: true,
+                map: bmap  // 百度地图的map实例
+            });
+            this.mapv.el = mapv;
+
             this.figure_1.el = echarts.init(document.getElementById('fig-1'));
             this.figure_2.el = echarts.init(document.getElementById('fig-2'));
             this.figure_3.el = echarts.init(document.getElementById('fig-3'));
@@ -248,30 +239,20 @@
                 if(date==this.current_day || !this.validate_date(day)) {
                     return false;
                 }
-                var data_url = this.data_url+"dateid/"+date+"/user-list.json";
-                this.mapv.raw_data = {};
-                this.mapv.data = {
-                    special_point_list:[],
-                    normal_point_list:[],
-                    arc_list:[]
-                };
-                this.user_color_list = {};
+                var data_url = this.data_url+"date/"+date+"/matrix.json";
                 this.$http.get(data_url).then(function (response) {
-                    this.current_day = date;
-                    this.user_list = response.json();
-
-                    var color_list = ['3FB8AF','FF9E9D','FF3D7F','FA6900','41A1E1'];
-                    for(var i in this.user_list) {
-                        var rand_index = Math.floor(Math.random() * color_list.length);
-                        this.user_color_list[this.user_list[i]] = '#'+color_list[rand_index];
+                    this.mapv.data = [];
+                    var resp_data = response.json();
+                    for(var i in resp_data) {
+                        this.mapv.data.push(resp_data[i]);
                     }
-
-                    this.loadTripMap(0);
-                },function (response) {
+                    this.current_day = date;
+                    this.renderMap();
+                }, function (response) {
                     return false;
                 });
 
-                var data_url = this.data_url+"dateid/"+date+"/line.json";
+                var data_url = this.data_url+"date/"+date+"/line.json";
                 this.$http.get(data_url).then(function (response) {
                     var resp_data = response.json();
                     this.figure_1.data['line_data1'] = resp_data['line_data'];
@@ -281,7 +262,7 @@
                     return false;
                 });
 
-                var data_url = this.data_url+"dateid/"+date+"/count.json";
+                var data_url = this.data_url+"date/"+date+"/count.json";
                 this.$http.get(data_url).then(function (response) {
                     var resp_data = response.json();
                     this.figure_2.data['legend_data'] = resp_data['count_legend_data'];
@@ -291,11 +272,11 @@
                     return false;
                 });
 
-                var data_url = this.data_url+"dateid/"+date+"/duration.json";
+                var data_url = this.data_url+"date/"+date+"/update.json";
                 this.$http.get(data_url).then(function (response) {
                     var resp_data = response.json();
-                    this.figure_3.data['legend_data'] = resp_data['duration_legend_data'];
-                    this.figure_3.data['duration_data'] = resp_data['duration_data'];
+                    this.figure_3.data['legend_data'] = resp_data['update_legend_data'];
+                    this.figure_3.data['update_data'] = resp_data['update_data'];
                     this.renderFig3();
                 }, function (response) {
                     return false;
@@ -308,136 +289,24 @@
                 this.renderFig3();
 
             },
-            convertMapData: function (user, points_data) {
-                var special_point_list = [];
-                var normal_point_list = [];
-                var arc_list = {coords:[],lineStyle:{}};
-                for(var i=0; i<points_data.length; i++) {
-                    var point = {
-                        name:points_data[i]['label'],
-                        value:points_data[i]['coords'],
-                        itemStyle: {normal: {color:this.user_color_list[user]}},
-                    };
-                    if(points_data[i]["is_special"]===true) {
-                        special_point_list.push(point);
-                    } else {
-                        normal_point_list.push(point);
-                    }
-                    arc_list.coords.push(points_data[i]['coords'])
+            renderMap: function () {
+                this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
+                var bs = this.mapv.el._map.getBounds();
+                for(var i in this.mapv.data) {
+                    var point1 = new BMap.Point(this.mapv.data[i][0], this.mapv.data[i][1]);
+                    var point2 = new BMap.Point(this.mapv.data[i][2], this.mapv.data[i][3]);
+                    var matrix = new BMap.Polygon([
+                        new BMap.Point(point1.lng,point1.lat),
+                        new BMap.Point(point2.lng,point1.lat),
+                        new BMap.Point(point2.lng,point2.lat),
+                        new BMap.Point(point1.lng,point2.lat)
+                    ], {strokeColor:this.mapv.data[i][4], strokeWeight:2, strokeOpacity:0,fillOpacity:0.5,fillColor:this.mapv.data[i][4]});
+                    this.mapv.el._map.addOverlay(matrix);
                 }
-                arc_list['lineStyle'] = {normal:{color:this.user_color_list[user]}};
-
-                this.mapv.data.special_point_list = this.mapv.data.special_point_list.concat(special_point_list);
-                this.mapv.data.normal_point_list = this.mapv.data.normal_point_list.concat(normal_point_list);
-                this.mapv.data.arc_list.push(arc_list);
-            },
-            loadTripMap: function (user) {
-                this.mapv.data = {
-                    special_point_list:[],
-                    normal_point_list:[],
-                    arc_list:[]
-                };
-                var user_list = [];
-                if(user===0) {
-                    this.current_user= '全部';
-                    user_list = this.user_list;
-                } else {
-                    this.current_user = user;
-                    user_list = [user];
-                }
-
-                //需要使用闭包避免异步程序完成后变量值覆盖
-                user_list.forEach(function (item, index) {
-                    var user = item;
-                    if(app.mapv.raw_data[user]===undefined) {
-                        var data_url = app.data_url+"dateid/"+app.current_day+"/" + user + "/point.json";
-                        Vue.http.get(data_url).then(function (response) {
-                            app.mapv.raw_data[user] = response.json();
-                            app.convertMapData( user, app.mapv.raw_data[user] );
-                            app.renderMap(user);
-                        }, function (response) {
-                            return false;
-                        });
-                    } else {
-                        app.convertMapData( user, app.mapv.raw_data[user] );
-                        app.renderMap(user);
-                    }
-                });
-
-            },
-            renderMap: function (user) {
-                //this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                if(this.current_user=='全部') {
-                    if(Object.keys(this.mapv.raw_data).length !==this.user_list.length) {
-                        return false;
-                    }
-                }
-
-                var special_point_config = {
-                    type: "effectScatter",
-                    label: {normal: {show: true, position: 'right', formatter: '{b}'}},
-                    itemStyle: {normal: {color:"#e7c4f2"}},
-                    effectType: "ripple",
-                    coordinateSystem: "bmap",
-                    symbolSize:5,
-                    data: this.mapv.data.special_point_list
-                };
-                var normal_point_config = {
-                    type:'scatter',
-                    label: {normal: {show: true, position: 'right', formatter: '{b}'}},
-                    itemStyle: {normal: {color:"#e7c4f2"}},
-                    symbol: 'circle',
-                    coordinateSystem: "bmap",
-                    symbolSize: 4,
-                    data: this.mapv.data.normal_point_list
-                };
-                var line1_config = {
-                    type: 'lines',
-                    coordinateSystem: 'bmap',
-                    polyline: true,
-                    data: this.mapv.data.arc_list,
-                    silent: true,
-                    lineStyle: {normal: {opacity: 0.4, width: 3}},
-                    progressiveThreshold: 500,
-                    progressive: 200
-                };
-                var line2_config = {
-                    type: 'lines',
-                    coordinateSystem: 'bmap',
-                    polyline: true,
-                    data: this.mapv.data.arc_list,
-                    lineStyle: {normal: {width: 0}},
-                    effect: {constantSpeed: 50, show: true, trailLength: 0.2, symbolSize: 4},
-                    zlevel: 1
-                };
-                var series = [special_point_config,normal_point_config,line1_config,line2_config];
-                //var series = [special_point_config,normal_point_config];
-                option = {
-                    bmap: {
-                        center: [116.406833, 39.91527],
-                        zoom: 12,
-                        roam: true,
-                        mapStyle: {
-                            'styleJson': map_style
-                        }
-                    },
-                    backgroundColor: '#404a59',
-                    title : {
-                        text: '模拟迁徙',
-                        subtext: '数据纯属虚构',
-                        left: 'center',
-                        textStyle : {
-                            color: '#fff'
-                        }
-                    },
-                    series: series
-                };
-
-                this.mapv.el.setOption(option);
             },
             renderFig1: function () {
                 var option = {
-                    title : {text: '全样本每小时停留点数量(24小时)', textStyle:{color:'#5d5d5d'}},
+                    title : {text: '每小时信令数据量', textStyle:{color:'#5d5d5d'}},
                     tooltip: {trigger: 'axis'},
                     toolbox: {
                         feature: {
@@ -476,7 +345,9 @@
                             type:'bar',
                             data:this.figure_1.data.line_data1,
                             itemStyle: {
-                                normal: {color: 'rgba(124,181,236,0.7)'}
+                                normal: {
+                                    color: 'rgba(124,181,236,0.7)'
+                                }
                             }
                         },
                         {
@@ -484,30 +355,35 @@
                             type:'line',
                             data:this.figure_1.data.line_data2,
                             itemStyle: {
-                                normal: {color: 'rgba(67,67,72,0.7)'}
+                                normal: {
+                                    color: 'rgba(67,67,72,0.7)'
+                                }
                             }
+
                         }
                     ]
                 };
+
+
                 // 使用刚指定的配置项和数据显示图表。
                 this.figure_1.el.setOption(option);
             },
             renderFig2: function () {
                 option = {
-                    title : {text: '用户停留点数量分布', x:'center'},
+                    title : {text: '用户记录数分布', x:'center'},
                     tooltip : {trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"},
                     backgroundColor: '#ffffff',
                     legend: {
-                        orient: 'horizontal',
-                        bottom: "bottom",
+                        orient: 'vertical',
+                        left: 'left',
                         data: this.figure_2.data.legend_data
                     },
                     series : [
                         {
-                            name: '',
+                            name: '访问来源',
                             type: 'pie',
-                            radius : '40%',
-                            center: ['50%', '50%'],
+                            radius : '45%',
+                            center: ['50%', '60%'],
                             data: this.figure_2.data.count_data,
                             itemStyle: {
                                 emphasis: {shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)'}
@@ -520,37 +396,24 @@
 
             renderFig3: function () {
                 option = {
-                    title : {text: '用户停留时长分布', x:'center'},
-                    color: ['#3398DB'],
+                    title : {text: '更新周期分布', x:'center'},
+                    tooltip : {trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"},
                     backgroundColor: '#ffffff',
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                        }
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: this.figure_3.data.legend_data
                     },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            data : this.figure_3.data.legend_data,
-                            axisTick: {alignWithLabel: true}
-                        }
-                    ],
-                    yAxis : [
-                        {type : 'value'}
-                    ],
                     series : [
                         {
-                            name:'时长',
-                            type:'bar',
-                            barWidth: '60%',
-                            data:this.figure_3.data.duration_data
+                            name: '访问来源',
+                            type: 'pie',
+                            radius : '45%',
+                            center: ['50%', '60%'],
+                            data: this.figure_3.data.update_data,
+                            itemStyle: {
+                                emphasis: {shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)'}
+                            }
                         }
                     ]
                 };

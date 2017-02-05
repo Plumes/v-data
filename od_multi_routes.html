@@ -9,6 +9,7 @@
 
     <script src='assets/jquery-3.1.0.slim.min.js'></script>
     <script src="assets/vue.js"></script>
+    <script src="assets/config.js"></script>
     <script src="assets/vue-resource-0.9.3.min.js"></script>
     <script src="data/date/date_list.js"></script>
     <script src="assets/map_style.js"></script>
@@ -132,7 +133,7 @@
             month : 0,
             day_name_list : ['一','二','三','四','五','六','日'],
             valid_date: [],
-            data_url: 'http://192.168.33.10/dv/data/',
+            data_url:  base_site + 'data/',
             od_list:[],
             current_od:[{id:"",name:""},{id:"",name:""}],
             mapv:{

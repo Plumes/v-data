@@ -25,33 +25,33 @@
         <span>基于手机信令数据的城域出行模式分析系统</span>
     </div>
 </div>
+<div class="pure-menu" id="left-nav">
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">数据概况</a></li>
+        <li class="pure-menu-item current"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
+        <li class="pure-menu-item pure-menu-has-submenu" >
+
+            <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
+            <ul class="submenu">
+                <li class="pure-menu-item"><a href="matrix.html" class="pure-menu-link">居住区</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
+            </ul>
+        </li>
+
+        <li class="pure-menu-item pure-menu-has-submenu">
+            <a href="#" class="pure-menu-link">OD热度<i class="material-icons">keyboard_arrow_right</i></a>
+            <ul class="submenu">
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">上班OD</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">回家OD</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">全天OD</a></li>
+            </ul>
+        </li>
+
+        <li class="pure-menu-item"><a href="od_multi_routes.html" class="pure-menu-link">OD轨迹</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">出行模式</a></li>
+    </ul>
+</div>
 <div class="container">
-    <div class="pure-menu" id="left-nav">
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item"><a href="#" class="pure-menu-link">数据概况</a></li>
-            <li class="pure-menu-item current"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
-            <li class="pure-menu-item pure-menu-has-submenu" >
-
-                <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
-                <ul class="submenu">
-                    <li class="pure-menu-item"><a href="matrix.html" class="pure-menu-link">居住区</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
-                </ul>
-            </li>
-
-            <li class="pure-menu-item pure-menu-has-submenu">
-                <a href="#" class="pure-menu-link">OD热度<i class="material-icons">keyboard_arrow_right</i></a>
-                <ul class="submenu">
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">上班OD</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">回家OD</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">全天OD</a></li>
-                </ul>
-            </li>
-
-            <li class="pure-menu-item"><a href="od_multi_routes.html" class="pure-menu-link">OD轨迹</a></li>
-            <li class="pure-menu-item"><a href="#" class="pure-menu-link">出行模式</a></li>
-        </ul>
-    </div>
     <div class="right-col">
         <div class="panel">
             <div id="calendar">
@@ -116,10 +116,10 @@
     </div>
 </div>
 <script>
-    $(".pure-menu-has-submenu").click(function () {
-        $(this).toggleClass('pure-menu-show-submenu');
-        $(this).find(".submenu").toggle();
-    })
+    $(".pure-menu-has-submenu>a").click(function () {
+        $(this).parent().toggleClass('pure-menu-show-submenu');
+        $(this).parent().find(".submenu").toggle();
+    });
     $(".arrow").click(function () {
         $(".resultbox").toggleClass("list-shown");
         $(".arrow").toggleClass("upward");

@@ -24,33 +24,32 @@
         <span>基于手机信令数据的城域出行模式分析系统</span>
     </div>
 </div>
+<div class="pure-menu" id="left-nav">
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="index.html" class="pure-menu-link">数据概况</a></li>
+        <li class="pure-menu-item"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
+        <li class="pure-menu-item pure-menu-has-submenu pure-menu-show-submenu">
+            <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
+            <ul class="submenu" style="display: block;">
+                <li class="pure-menu-item current"><a href="#" class="pure-menu-link">居住区</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
+            </ul>
+        </li>
 
+        <li class="pure-menu-item pure-menu-has-submenu">
+            <a href="#" class="pure-menu-link">OD热度<i class="material-icons">keyboard_arrow_right</i></a>
+            <ul class="submenu">
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">上班OD</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">回家OD</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">全天OD</a></li>
+            </ul>
+        </li>
+
+        <li class="pure-menu-item"><a href="od_multi_routes.html" class="pure-menu-link">OD轨迹</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">出行模式</a></li>
+    </ul>
+</div>
 <div class="container">
-    <div class="pure-menu" id="left-nav">
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item"><a href="index.html" class="pure-menu-link">数据概况</a></li>
-            <li class="pure-menu-item"><a href="phone_trip.html" class="pure-menu-link">单日出行链</a></li>
-            <li class="pure-menu-item pure-menu-has-submenu pure-menu-show-submenu">
-                <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
-                <ul class="submenu" style="display: block;">
-                    <li class="pure-menu-item current"><a href="#" class="pure-menu-link">居住区</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
-                </ul>
-            </li>
-
-            <li class="pure-menu-item pure-menu-has-submenu">
-                <a href="#" class="pure-menu-link">OD热度<i class="material-icons">keyboard_arrow_right</i></a>
-                <ul class="submenu">
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">上班OD</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">回家OD</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">全天OD</a></li>
-                </ul>
-            </li>
-
-            <li class="pure-menu-item"><a href="od_multi_routes.html" class="pure-menu-link">OD轨迹</a></li>
-            <li class="pure-menu-item"><a href="#" class="pure-menu-link">出行模式</a></li>
-        </ul>
-    </div>
     <div class="right-col">
         <div class="panel">
             <div id="calendar">
@@ -102,10 +101,10 @@
     </div>
 </div>
 <script>
-    $(".pure-menu-has-submenu").click(function () {
-        $(this).toggleClass('pure-menu-show-submenu');
-        $(this).find(".submenu").toggle();
-    })
+    $(".pure-menu-has-submenu>a").click(function () {
+        $(this).parent().toggleClass('pure-menu-show-submenu');
+        $(this).parent().find(".submenu").toggle();
+    });
     Vue.config.devtools = true;
 
     var calendar = new Vue({
@@ -291,18 +290,22 @@
 
             },
             renderMap: function () {
-                this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                var bs = this.mapv.el._map.getBounds();
+                var map_obj = this.mapv.el._map;
+                map_obj.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
                 for(var i in this.mapv.data) {
-                    var point1 = new BMap.Point(this.mapv.data[i][0], this.mapv.data[i][1]);
-                    var point2 = new BMap.Point(this.mapv.data[i][2], this.mapv.data[i][3]);
-                    var matrix = new BMap.Polygon([
-                        new BMap.Point(point1.lng,point1.lat),
-                        new BMap.Point(point2.lng,point1.lat),
-                        new BMap.Point(point2.lng,point2.lat),
-                        new BMap.Point(point1.lng,point2.lat)
-                    ], {strokeColor:this.mapv.data[i][4], strokeWeight:2, strokeOpacity:0,fillOpacity:0.5,fillColor:this.mapv.data[i][4]});
-                    this.mapv.el._map.addOverlay(matrix);
+                    var matrix_data = this.mapv.data[i];
+                    var points = [];
+                    for(var j in matrix_data['points']) {
+                        points.push(new BMap.Point(matrix_data['points'][j][0],matrix_data['points'][j][1]));
+                    }
+                    var matrix = new BMap.Polygon(points, {strokeColor:matrix_data['color'], strokeWeight:2, strokeOpacity:0,fillOpacity:0.5,fillColor:matrix_data['color']});
+                    map_obj.addOverlay(matrix);
+
+                    var infoWindow = new BMap.InfoWindow(matrix_data['title']);  // 创建信息窗口对象
+                    matrix.addEventListener("mouseover", function(){
+                        map_obj.openInfoWindow(infoWindow,points[0]); //开启信息窗口
+                    });
+                    matrix.addEventListener("mouseout", function(){map_obj.closeInfoWindow();});
                 }
             },
             renderFig1: function () {

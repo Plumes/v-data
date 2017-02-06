@@ -232,6 +232,14 @@
                 //判断当前日期是否是有数据的
                 return this.valid_date.indexOf(day)>-1;
             },
+            showInfo: function (e) {
+                var matrix = e.target;
+                var infoWindow = new BMap.InfoWindow(matrix.title);  // 创建信息窗口对象
+                this.mapv.el._map.openInfoWindow(infoWindow,matrix.start_point);
+            },
+            closeInfo: function () {
+                this.mapv.el._map.closeInfoWindow();
+            },
             loadData:function (day) {
                 var date = this.year * 10000 + this.month * 100 + day;
 
@@ -300,12 +308,11 @@
                     }
                     var matrix = new BMap.Polygon(points, {strokeColor:matrix_data['color'], strokeWeight:2, strokeOpacity:0,fillOpacity:0.5,fillColor:matrix_data['color']});
                     map_obj.addOverlay(matrix);
+                    matrix.title = matrix_data['title'];
+                    matrix.start_point = points[0];
 
-                    var infoWindow = new BMap.InfoWindow(matrix_data['title']);  // 创建信息窗口对象
-                    matrix.addEventListener("mouseover", function(){
-                        map_obj.openInfoWindow(infoWindow,points[0]); //开启信息窗口
-                    });
-                    matrix.addEventListener("mouseout", function(){map_obj.closeInfoWindow();});
+                    matrix.addEventListener("click", this.showInfo);
+                    matrix.addEventListener("mouseout", this.closeInfo);
                 }
             },
             renderFig1: function () {

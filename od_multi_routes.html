@@ -5,7 +5,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="assets/pure-0.6.0-min.css">
     <link href="assets/googlefont.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style2.css">
 
     <script src='assets/jquery-3.1.0.slim.min.js'></script>
     <script src="assets/vue.js"></script>
@@ -81,36 +81,36 @@
                 </table>
             </div>
         </div>
-
-        <div class="panel" id="fig-2" style="height: 300px;">
-
-        </div>
-        <div class="panel" id="fig-3" style="height: 300px;">
-
-        </div>
-    </div>
-
-    <div class="left-col">
-        <div class="panel" style="height: 594px;">
+        <div class="panel" style="padding: 0;">
             <div class="omnibox-container">
                 <div class="omnibox">
                     <div class="resultbox">
                         <i class="material-icons">location_on</i>
                         <div class="result">{{ current_od[0]['name'] }}-{{ current_od[1]['name'] }}</div>
-                        <i class="material-icons arrow">keyboard_arrow_down</i>
+                        <i class="material-icons arrow" style="float: right;display: block;">keyboard_arrow_down</i>
                     </div>
                     <ul class="suggestion-list">
                         <li class="suggestion" v-for="od in od_list" v-on:click="loadTripMap(od)" ><i class="material-icons" style="color: #5d5d5d;">location_on</i>{{ od[0].name }}-{{ od[1].name }}</li>
                     </ul>
                 </div>
             </div>
-            <div id="bmap" style="height: 100%;">
 
-            </div>
         </div>
 
-        <div class="panel" style="height: 300px;">
+        <div class="panel" style="height: 300px;display: none;">
             <div id="fig-1" style="height: 100%"></div>
+        </div>
+        <div class="panel" id="fig-2" style="height: 300px;display: none;">
+
+        </div>
+        <div class="panel" id="fig-3" style="height: 300px;display: none;">
+
+        </div>
+    </div>
+
+    <div class="left-col">
+        <div id="bmap" style="height: 100%;">
+
         </div>
     </div>
 </div>

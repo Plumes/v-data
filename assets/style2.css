@@ -1,0 +1,325 @@
+html, body {
+    font-size: 100%;
+    background: #f4f7f9;
+    color: #5d5d5d;
+    height: 100%;
+}
+#navbar {
+    position: fixed;
+    width: 100%;
+    height: 60px;
+    background-color: rgb(77,115,151);
+    z-index: 3;
+    top: 0;
+    left: 0;
+}
+#navbar .title {
+    color: #eee;
+    font-size: 20px;
+    height: 60px;
+    padding-left: 20px;
+    line-height: 60px;
+    width: 450px;
+}
+.container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    z-index: 1;
+    height: 100%;
+}
+.container .left-col {
+    overflow: hidden;
+    zoom: 1;
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+    height: 100%;
+    margin-left: 240px;
+}
+.container .right-col {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    width: 400px;
+    zoom: 1;
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+    z-index: 2;
+}
+.panel {
+    margin: 10px;
+    background: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0 rgba(0,0,0,0.02);
+    overflow: hidden;
+    position: relative;
+}
+#menu-btn {
+    float: right;
+    color: #eeeeee;
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+    line-height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+}
+#menu-btn i {
+    vertical-align: text-bottom;
+}
+#left-nav {
+    width: 240px;
+    background-color: rgb(41,53,65);
+    height: 100%;
+    top: 60px;
+    left: 0;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+    box-sizing: border-box;
+    color: #efefef;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 3;
+    position: fixed;
+    zoom: 1;
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+}
+#hide-menu-btn {
+    position: relative;
+    float: right;
+    padding: 0.25em 1em;
+    cursor: pointer;
+}
+#left-nav .pure-menu-title {
+    height: 2em;
+    line-height: 2em;
+    padding: 1em 0em 1em 1em;
+    color: #5d5d5d;
+    font-size: 20px;
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+#left-nav .pure-menu-link {
+    color: #efefef;
+    font-size: 20px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 0 0 10px;
+    display: block;
+}
+
+#left-nav ul.pure-menu-list li.current a:after {
+    content:'';
+    width: 4px;
+    height: 30px;
+    display: block;
+    float: right;
+    margin-top: 5px;
+    background-color: deepskyblue;
+}
+ul.pure-menu-list li a:hover {
+    background: none;
+}
+#left-nav ul.pure-menu-list li.pure-menu-item ul.submenu {
+    display: none;
+    padding-left: 10px;
+}
+#left-nav ul.submenu a {
+    font-size: 16px;
+}
+#left-nav li.pure-menu-item.pure-menu-has-submenu i{
+    float: right;
+    transition: transfrom 1s;
+    vertical-align: middle;
+    line-height: 40px;
+}
+#left-nav li.pure-menu-item.pure-menu-show-submenu i{
+    transform: rotate(90deg);
+}
+#left-nav li.pure-menu-item.pure-menu-show-submenu {
+    background-color: rgb(31,38,48);
+    border-top: 2px solid rgb(27,34,44);
+}
+#calendar {
+    margin: 0;
+}
+#calendar .headbar {
+    box-sizing:border-box;
+    height: 48px;
+    line-height: 48px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+}
+#calendar .headbar .control {
+    box-sizing:border-box;
+    border: none;
+    margin: 0;
+    display: inline-block;
+    height: 48px;
+    line-height: 48px;
+    width: 10%;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#calendar .headbar i {
+    vertical-align: middle;
+    font-size: 24px;
+}
+
+#calendar .headbar .date-title {
+    width: 60%;
+    cursor: default;
+}
+
+.date-title .year, .date-title .month {
+    font-size: 20px;
+    display: inline-block;
+}
+
+#calendar .week {
+    width: 100%;
+    text-align: center;
+}
+#calendar .week tr {
+    height: 36px;
+    line-height: 36px;
+}
+#calendar .week tr td {
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+#calendar .week td a {
+    display: inline-block;
+    text-align: center;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    margin: 4px;
+    border: 0;
+    border-radius: 14px;
+
+    -webkit-user-select: none;
+    user-select: none;
+}
+#calendar .week td.has-data a{
+    margin: 2px;
+    background-color: skyblue;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+#calendar .week td.has-data.current a {
+    background-color:#e7c4f2;
+    cursor: default;
+}
+
+/*phonetrip*/
+.omnibox-container {
+    z-index: 1;
+}
+.omnibox {
+    margin: 0;
+}
+.resultbox {
+    font-size: 0px;
+    display: inline-block;
+    position: relative;
+    background: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+    width: 380px;
+    height: 50px;
+    line-height: 50px;
+    cursor: default;
+    color: #424242;
+    /*box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);*/
+}
+.resultbox i {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 10px;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    line-height: 30px;
+}
+.resultbox .result {
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: middle;
+    width: 200px;
+    margin-left: 10px;
+}
+.resultbox .arrow.upward{
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.resultbox.list-shown {
+    border-radius: 2px 2px 0 0;
+}
+ul {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    vertical-align: baseline;
+    background: transparent;
+    list-style: none;
+    overflow: visible;
+}
+.suggestion-list {
+    display: none;
+    background-color: #fff;
+    border-radius: 0 0 2px 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 15px;
+    overflow: hidden;
+    width: 380px;
+    max-height: 440px;
+    overflow-y: scroll;
+}
+.suggestion {
+    position: relative;
+    color: #5d5d5d;
+    font-size: 16px;
+    line-height: 24px;
+    min-height: 24px;
+    padding: 6px 0 7px 0;
+    border-top: 1px solid #e6e6e6;
+    cursor: default;
+    direction: ltr;
+    text-align: left;
+}
+.suggestion:last-child {
+    border-radius: 0 0 2px 2px;
+}
+.suggestion:hover {
+    background-color: #fafafa;
+}
+.suggestion i {
+    color: transparent;
+    font-size: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 8px;
+}

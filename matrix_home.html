@@ -32,7 +32,7 @@
             <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
             <ul class="submenu" style="display: block;">
                 <li class="pure-menu-item current"><a href="#" class="pure-menu-link">居住区</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
+                <li class="pure-menu-item"><a href="matrix_work.html" class="pure-menu-link">工作区</a></li>
             </ul>
         </li>
 
@@ -49,7 +49,7 @@
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">出行模式</a></li>
     </ul>
 </div>
-<div class="container">
+<div class="container" id="page">
     <div class="right-col">
         <div class="panel">
             <div id="calendar">
@@ -95,6 +95,11 @@
         <div id="bmap" style="height: 100%;">
 
         </div>
+        <div class="timeline" style="">
+            <div class="hour" v-for="hour in mapv.data.length" v-bind:class="{current:mapv.current_hour==hour}">
+                <span>{{hour}}</span>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -104,8 +109,8 @@
     });
     Vue.config.devtools = true;
 
-    var calendar = new Vue({
-        el:'#calendar',
+    var app = new Vue({
+        el:'#page',
         data: {
             year : 0,
             month : 0,
@@ -114,7 +119,8 @@
             data_url: base_site + 'data/',
             mapv:{
                 el:{},
-                data:[]
+                data:[],
+                current_hour:-1
             },
             figure_1:{
                 el:{},
@@ -188,7 +194,7 @@
                 minZoom: 4
                 //vectorMapLevel: 3
             });
-            bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
+            bmap.centerAndZoom(new BMap.Point(116.836481, 40.303197), 10);
             bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
             bmap.enableContinuousZoom();
             bmap.setMapStyle({
@@ -244,7 +250,7 @@
                 if(date==this.current_day || !this.validate_date(day)) {
                     return false;
                 }
-                var data_url = this.data_url+"date/"+date+"/matrix.json";
+                var data_url = this.data_url+"date/"+date+"/matrix_home.json";
                 this.$http.get(data_url).then(function (response) {
                     this.mapv.data = [];
                     var resp_data = response.json();
@@ -253,52 +259,60 @@
                     }
                     this.current_day = date;
                     this.renderMap();
+                    setInterval(function () {
+                        this.renderMap();
+                    }.bind(this), 5000);
                 }, function (response) {
                     return false;
                 });
 
-                var data_url = this.data_url+"date/"+date+"/line.json";
-                this.$http.get(data_url).then(function (response) {
-                    var resp_data = response.json();
-                    this.figure_1.data['line_data1'] = resp_data['line_data'];
-                    this.figure_1.data['line_data2'] = resp_data['line_data2'];
-                    this.renderFig1();
-                }, function (response) {
-                    return false;
-                });
-
-                var data_url = this.data_url+"date/"+date+"/count.json";
-                this.$http.get(data_url).then(function (response) {
-                    var resp_data = response.json();
-                    this.figure_2.data['legend_data'] = resp_data['count_legend_data'];
-                    this.figure_2.data['count_data'] = resp_data['count_data'];
-                    this.renderFig2();
-                }, function (response) {
-                    return false;
-                });
-
-                var data_url = this.data_url+"date/"+date+"/update.json";
-                this.$http.get(data_url).then(function (response) {
-                    var resp_data = response.json();
-                    this.figure_3.data['legend_data'] = resp_data['update_legend_data'];
-                    this.figure_3.data['update_data'] = resp_data['update_data'];
-                    this.renderFig3();
-                }, function (response) {
-                    return false;
-                });
+//                var data_url = this.data_url+"date/"+date+"/line.json";
+//                this.$http.get(data_url).then(function (response) {
+//                    var resp_data = response.json();
+//                    this.figure_1.data['line_data1'] = resp_data['line_data'];
+//                    this.figure_1.data['line_data2'] = resp_data['line_data2'];
+//                    this.renderFig1();
+//                }, function (response) {
+//                    return false;
+//                });
+//
+//                var data_url = this.data_url+"date/"+date+"/count.json";
+//                this.$http.get(data_url).then(function (response) {
+//                    var resp_data = response.json();
+//                    this.figure_2.data['legend_data'] = resp_data['count_legend_data'];
+//                    this.figure_2.data['count_data'] = resp_data['count_data'];
+//                    this.renderFig2();
+//                }, function (response) {
+//                    return false;
+//                });
+//
+//                var data_url = this.data_url+"date/"+date+"/update.json";
+//                this.$http.get(data_url).then(function (response) {
+//                    var resp_data = response.json();
+//                    this.figure_3.data['legend_data'] = resp_data['update_legend_data'];
+//                    this.figure_3.data['update_data'] = resp_data['update_data'];
+//                    this.renderFig3();
+//                }, function (response) {
+//                    return false;
+//                });
             },
             renderData: function () {
-                this.renderMap();
+                setInterval(function () {
+                    this.renderMap();
+                }.bind(this), 5000);
                 this.renderFig1();
                 this.renderFig2();
                 this.renderFig3();
 
             },
             renderMap: function () {
+                this.mapv.current_hour = (this.mapv.current_hour + 1)%this.mapv.data.length;
+                var hour = this.mapv.current_hour;
                 var map_obj = this.mapv.el._map;
-                map_obj.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
-                for(var i in this.mapv.data) {
-                    var matrix_data = this.mapv.data[i];
+                map_obj.clearOverlays();
+                map_obj.centerAndZoom(new BMap.Point(116.836481, 40.303197), 10);
+                for(var i in this.mapv.data[hour]) {
+                    var matrix_data = this.mapv.data[hour][i];
                     var points = [];
                     for(var j in matrix_data['points']) {
                         points.push(new BMap.Point(matrix_data['points'][j][0],matrix_data['points'][j][1]));
@@ -311,6 +325,7 @@
                     matrix.addEventListener("click", this.showInfo);
                     matrix.addEventListener("mouseout", this.closeInfo);
                 }
+
             },
             renderFig1: function () {
                 var option = {

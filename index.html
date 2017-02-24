@@ -31,7 +31,7 @@
 
             <a href="#" class="pure-menu-link">热点区域<i class="material-icons">keyboard_arrow_right</i></a>
             <ul class="submenu">
-                <li class="pure-menu-item"><a href="matrix.html" class="pure-menu-link">居住区</a></li>
+                <li class="pure-menu-item"><a href="matrix_home.html" class="pure-menu-link">居住区</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">工作区</a></li>
             </ul>
         </li>
@@ -188,7 +188,7 @@ var calendar = new Vue({
             minZoom: 4
             //vectorMapLevel: 3
         });
-        bmap.centerAndZoom(new BMap.Point(105.403119, 38.028658), 6);
+        bmap.centerAndZoom(new BMap.Point(117.136481, 39.943197), 10);
         bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
         bmap.enableContinuousZoom();
         bmap.setMapStyle({
@@ -291,7 +291,7 @@ var calendar = new Vue({
 
         },
         renderMap: function () {
-            this.mapv.el._map.centerAndZoom(new BMap.Point(116.406833, 39.91527), 10);
+            this.mapv.el._map.centerAndZoom(new BMap.Point(117.136481, 39.943197), 10);
             var layer = new Mapv.Layer({
                 mapv: this.mapv.el, // 对应的mapv实例
                 zIndex: 1, // 图层层级

@@ -323,3 +323,23 @@ ul {
     vertical-align: middle;
     padding: 8px;
 }
+.timeline {
+    background: #ffffff;
+    width: auto;
+    left: 260px;
+    position: absolute;
+    bottom: 20px;
+    padding: 10px;
+}
+.timeline .hour {
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    color: #333333;
+}
+.timeline .hour.current {
+    background-color: deepskyblue;
+    color: #ffffff;
+}

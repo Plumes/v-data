@@ -119,11 +119,6 @@
         $(this).parent().toggleClass('pure-menu-show-submenu');
         $(this).parent().find(".submenu").toggle();
     });
-    $(".arrow").click(function () {
-        $(".resultbox").toggleClass("list-shown");
-        $(".arrow").toggleClass("upward");
-        $(".suggestion-list").toggle();
-    })
     Vue.config.devtools = true;
 
     var app = new Vue({

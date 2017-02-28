@@ -183,7 +183,7 @@
                 minZoom: 4
                 //vectorMapLevel: 3
             });
-            bmap.centerAndZoom(new BMap.Point(117.136481, 39.943197), 10);
+            bmap.centerAndZoom(new BMap.Point(116.506481, 39.923197), 12);
             bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
             bmap.enableContinuousZoom();
             bmap.setMapStyle({
@@ -286,7 +286,7 @@
 
             },
             renderMap: function () {
-                this.mapv.el._map.centerAndZoom(new BMap.Point(117.136481, 39.943197), 10);
+                this.mapv.el._map.centerAndZoom(new BMap.Point(116.506481, 39.923197), 12);
                 var layer = new Mapv.Layer({
                     mapv: this.mapv.el, // 对应的mapv实例
                     zIndex: 1, // 图层层级

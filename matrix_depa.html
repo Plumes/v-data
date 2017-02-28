@@ -168,7 +168,7 @@
                 minZoom: 4
                 //vectorMapLevel: 3
             });
-            bmap.centerAndZoom(new BMap.Point(116.336481, 40.003197), 11);
+            bmap.centerAndZoom(new BMap.Point(116.436481, 40.003197), 12);
             bmap.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
             bmap.enableContinuousZoom();
             bmap.setMapStyle({
@@ -239,7 +239,7 @@
             renderData: function () {
                 setInterval(function () {
                     this.renderMap();
-                }.bind(this), 5000);
+                }.bind(this), 3000);
 
             },
             renderMap: function () {
@@ -247,7 +247,7 @@
                 var hour = this.mapv.current_hour;
                 var map_obj = this.mapv.el._map;
                 map_obj.clearOverlays();
-                map_obj.centerAndZoom(new BMap.Point(116.336481, 40.003197), 11);
+                map_obj.centerAndZoom(new BMap.Point(116.436481, 40.003197), 12);
                 for(var i in this.mapv.data[hour]) {
                     var matrix_data = this.mapv.data[hour][i];
                     var points = [];

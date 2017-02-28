@@ -9,8 +9,8 @@
     "label":"",
     "is_special":true
   },
-  "routes":[
-    [
+  "routes":{
+    "route1":[
       [
         {"coords":[116.317256,39.901715],"is_special":false,"label":""},
         {"coords":[116.302595,39.923852],"is_special":false,"label":""},
@@ -24,7 +24,7 @@
         {"coords":[116.327317,40.004591],"is_special":false,"label":""}
       ]
     ],
-    [
+    "route2":[
       [
         {"coords":[116.348589,39.912784],"is_special":false,"label":""},
         {"coords":[116.362099,39.94753],"is_special":false,"label":""},
@@ -37,5 +37,5 @@
         {"coords":[116.396881,40.003264],"is_special":false,"label":""}
       ]
     ]
-  ]
+    }
 }

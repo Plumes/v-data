@@ -343,3 +343,22 @@ ul {
     background-color: deepskyblue;
     color: #ffffff;
 }
+
+.line_list {
+    padding: 5px;
+}
+.line_list li {
+    height: 30px;
+    line-height: 30px;
+}
+.line_list .dot {
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    background-color: #333333;
+    border-radius: 5px;
+}
+.line_list .line_name {
+    margin-left: 10px;
+    display: inline-block;
+}
